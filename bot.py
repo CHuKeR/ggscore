@@ -30,15 +30,8 @@ def get_user_id(message):
 Выбери, что настраивать:\n""" + mess,reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: True, content_types=['text'])
+@bot.message_handler(func=lambda message: utils.get_enable_setting(message.chat.id) != None, content_types=['text'])
 def check_answer(message):
-    # Если функция возвращает None -> Человек не активировал настройки
-    enable_setting = utils.get_enable_setting(message.chat.id)
-    # Answer может быть либо текст, либо None
-    # Если None:
-    if not enable_setting:
-        bot.send_message(message.chat.id, 'Если хотите настроек, выберите команду /setting (пока тут больше ничего нет)')
-    else:
         if message.text == "Закрыть и сохранить настройки":
             utils.close_settings(message.chat.id)
         # Если пользователь в настройках
@@ -59,6 +52,11 @@ def check_answer(message):
             else:
                 sql_client = SQLighter.MySqlClient
                 sql_client.change_setting(message.chat.id,settings_mode[1])
+
+@bot.message_handler(func=lambda message: utils.get_enable_setting(message.chat.id) == None, content_types=['text'])
+def check_answer(message):
+        bot.send_message(message.chat.id, 'Нет такого варианта =О! haha')
+
 
 if __name__=="__main__":
     bot.polling(none_stop=True)
