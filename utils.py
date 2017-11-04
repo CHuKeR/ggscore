@@ -57,12 +57,12 @@ def generate_markup(setting):
 
 # Закрыть настройки
 def close_settings(id):
-    utils.delete_user_settings(id)
+    delete_user_settings(id)
     try:
-        utils.delete_user_mode(id)
+        delete_user_mode(id)
     except Exception:
         pass
-    bot.send_message(id, 'Сохранено.', reply_markup=telebot.types.ReplyKeyboardRemove())
+    return ('Сохранено.')
 
 # Отрисовать клавиатуру
 def print_keyboard(settings):
@@ -72,3 +72,4 @@ def print_keyboard(settings):
         mess+="{}. {}\n".format(num,item)
         num+=1
     return mess
+

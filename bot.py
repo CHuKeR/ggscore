@@ -2,12 +2,44 @@ import config
 import telebot
 import utils
 import SQLighter
+from telebot import types
+
 
 
 
 
 bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
+
+
+# В большинстве случаев целесообразно разбить этот хэндлер на несколько маленьких
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    # Если сообщение из чата с ботом
+    if call.message:
+        if call.data == "test":
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Пыщь")
+    # Если сообщение из инлайн-режима
+    elif call.inline_message_id:
+        if call.data == "test":
+            bot.edit_message_text(inline_message_id=call.inline_message_id, text="Бдыщь")
+
+
+# Обычный режим
+@bot.message_handler(content_types=["text"])
+def any_msg(message):
+    keyboard = types.InlineKeyboardMarkup()
+    callback_button1 = types.InlineKeyboardButton(text="Нажми меня", callback_data="test")
+    callback_button2 = types.InlineKeyboardButton(text="Нажми меня ,быстро", callback_data="10")
+    keyboard.add(callback_button1)
+    keyboard.add(callback_button2)
+    bot.send_message(message.chat.id, "Я – сообщение из обычного режима", reply_markup=keyboard)
+
+
+
+
+
+
 
 
 
@@ -29,11 +61,14 @@ def get_user_id(message):
     Привет, давай настроим бота.
 Выбери, что настраивать:\n""" + mess,reply_markup=markup)
 
+#Проверка на включенные настройки
+@bot.message_handler(func=lambda message: (message.text) == "Закрыть и сохранить настройки", content_types=['text'])
+def check_close(message):
+    bot.send_message(message.chat.id,utils.close_settings(message.chat.id),reply_markup=telebot.types.ReplyKeyboardRemove())
 
+#Проверка на включенные настройки
 @bot.message_handler(func=lambda message: utils.get_enable_setting(message.chat.id) != None, content_types=['text'])
 def check_answer(message):
-        if message.text == "Закрыть и сохранить настройки":
-            utils.close_settings(message.chat.id)
         # Если пользователь в настройках
         settings_mode = utils.get_setting_mode(message.chat.id)
         if not settings_mode:
