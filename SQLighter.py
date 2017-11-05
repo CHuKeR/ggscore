@@ -4,7 +4,12 @@ import pymysql
 class DotaSqlClient:
 
     def __init__(self):
-        self.connection = pymysql.connect(host='localhost', port=3306, user='root', passwd='123', db='heroku_16092c835aedf9e')
+        self.connection = pymysql.connect(host='localhost',
+                                          port=3306,
+                                          user='root',
+                                          passwd='123',
+                                          db='heroku_16092c835aedf9e',
+                                          charset= "utf8")
         self.cursor = self.connection.cursor()
 
     # Сменит время с текста на цифры (а то БД жалуется)
@@ -86,3 +91,8 @@ class DotaSqlClient:
         with self.connection:
             self.cursor.execute(
                 "REPLACE INTO dota_db (`user_id`, `news_flag`) VALUES('{}', '{}');".format(chat_id, new_setting))
+
+    def add_user(self,user_id):
+        with self.connection:
+            sql = "insert into dota_db(user_id) values('{}')".format(user_id)
+            self.cursor.execute(sql)

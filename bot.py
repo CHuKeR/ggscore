@@ -1,6 +1,6 @@
 import config
 import telebot
-import utils
+from dota_parser_lib import info_match
 import SQLighter
 from telebot import types
 
@@ -12,45 +12,20 @@ bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
 
 
-# В большинстве случаев целесообразно разбить этот хэндлер на несколько маленьких
-@bot.callback_query_handler(func=lambda call: True)
-def callback_inline(call):
-    # Если сообщение из чата с ботом
-    if call.message:
-        if call.data == "test":
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Пыщь")
-    # Если сообщение из инлайн-режима
-    elif call.inline_message_id:
-        if call.data == "test":
-            bot.edit_message_text(inline_message_id=call.inline_message_id, text="Бдыщь")
-
-
-# Обычный режим
-@bot.message_handler(content_types=["text"])
-def any_msg(message):
-    keyboard = types.InlineKeyboardMarkup()
-    callback_button1 = types.InlineKeyboardButton(text="Нажми меня", callback_data="test")
-    callback_button2 = types.InlineKeyboardButton(text="Нажми меня ,быстро", callback_data="10")
-    keyboard.add(callback_button1)
-    keyboard.add(callback_button2)
-    bot.send_message(message.chat.id, "Я – сообщение из обычного режима", reply_markup=keyboard)
-
-
-
-
-
-
-
-
-
-
 @bot.message_handler(commands=["start"])
 def add_user_id(message):
-    sqlman = SQLighter.MySqlClient()
-    sqlman.add_user(message.chat.id)
-    bot.send_message(message.chat.id,"Hello!")
+    sqler = SQLighter.DotaSqlClient()
+    try:
+        sqler.add_user(message.chat.id)
+    except Exception:
+        pass
+    dota_info = info_match(sqler)
+    bot.send_message(message.chat.id,"Welcome to Dota2bot")
+    dota_info.give_today_matches()
 
 
+
+"""
 @bot.message_handler(commands=["setting"])
 def get_user_id(message):
     utils.enable_settings_for_user(message.chat.id)
@@ -58,9 +33,9 @@ def get_user_id(message):
     mess = utils.print_keyboard(settings)
     bot.send_message(message.chat.id,
     """
-    Привет, давай настроим бота.
-Выбери, что настраивать:\n""" + mess,reply_markup=markup)
-
+#    Привет, давай настроим бота.
+#Выбери, что настраивать:\n""" + mess,reply_markup=markup)
+"""
 #Проверка на включенные настройки
 @bot.message_handler(func=lambda message: (message.text) == "Закрыть и сохранить настройки", content_types=['text'])
 def check_close(message):
@@ -93,10 +68,9 @@ def check_answer(message):
         bot.send_message(message.chat.id, 'Нет такого варианта =О! haha')
 
 
-if __name__=="__main__":
-    bot.polling(none_stop=True)
 
 
+"""
 @bot.message_handler(commands=["322"])
 def get_user_id(message):
     bot.send_message(message.chat.id,
@@ -109,4 +83,7 @@ def get_user_id(message):
 @bot.message_handler(commands=["get_id"])
 def get_user_id(message):
     bot.send_message(message.chat.id,message.chat.id)
+
+if __name__=="__main__":
+    bot.polling(none_stop=True)
 

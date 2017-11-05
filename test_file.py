@@ -1,13 +1,14 @@
-from time import time
-from time import sleep
 import SQLighter
-import telebot
-import config
-from datetime import datetime
+import dota_parser_lib
+from time import time
 
-sum_time = 0
+
 sqler = SQLighter.DotaSqlClient()
-user_list = sqler.select_all_user_teams()
-user_list[0]
-user_list[1]
+sum_time = 0
+for i in range(0,10):
+    tic = time()
+    dp = dota_parser_lib.dota_parser(sqler)
+    toc = time()
+    sum_time+=toc-tic
+
 print(sum_time)
