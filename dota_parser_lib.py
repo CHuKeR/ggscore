@@ -79,16 +79,17 @@ class info_match():
 
     sqler = ""
 
-    def __init__(self,sqler):
+    def __init__(self,sqler, bot):
         self.sqler = sqler
         self.teams_with_id = sqler.select_all_dota_teams()
+        self.bot = bot
 
     def make_message_result(self,match):
         result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nResult: {}".format(match[0], match[1], match[2], match[3])
         return result
 
     def make_message_future(self,match):
-        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5])
+        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[1])
         return result
 
     def give_results_of_matches(self):
@@ -112,12 +113,10 @@ class info_match():
                     #Если эти матчи есть, то делаем результат, и выдаем это юзеру
                     if match[0] in user_team_list or match[1] in user_team_list:
                         mess = self.make_message_result(match)
-                        bot.send_message(int(user[0]),mess, parse_mode="Markdown")
+                        self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
             self.sqler.delete_finisher_matches()
 
     def give_today_matches(self):
-        # Инит бота
-        bot = telebot.TeleBot(config.token)
         #Обновляем день
         today = datetime.datetime.today().day
         month = datetime.datetime.today().month
@@ -125,7 +124,7 @@ class info_match():
         data_list = self.sqler.select_matches()
         user_list = self.sqler.select_all_user_teams()
         for user in user_list:
-            bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
+            self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
             if user[1]=="0;":
                 user_team_list = self.teams_with_id.values()
             else:
@@ -136,7 +135,7 @@ class info_match():
             for match in data_list:
                 if (match[0] in user_team_list or match[1] in user_team_list) and match[5][:len(str(today))] == str(today):
                     mess = self.make_message_future(match)
-                    bot.send_message(int(user[0]),mess,parse_mode="Markdown")
+                    self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
 
     def parse_match(url):
         driver = webdriver.Chrome('chromedriver.exe')

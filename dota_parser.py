@@ -2,10 +2,14 @@ import dota_parser_lib
 import datetime
 import SQLighter
 from time import sleep, time
+import telebot
+import config
 
 if __name__ == "__main__":
     counter = 0
     today = datetime.datetime.today().day
+    # Инит бота
+    bot = telebot.TeleBot(config.token)
     while True:
         counter+=1
         tic = time()
@@ -15,7 +19,7 @@ if __name__ == "__main__":
         dp.update_matches()
         #Каждое 4 обновление скрипта отдаем результаты матчей юзерам
         if counter%4==0:
-            dota_info = dota_parser_lib.info_match(sqler)
+            dota_info = dota_parser_lib.info_match(sqler,bot)
             dota_info.give_results_of_matches()
             counter = 0
         #Новый день - пишем матчи на сегодня
