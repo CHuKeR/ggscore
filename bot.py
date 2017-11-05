@@ -1,12 +1,9 @@
 import config
 import telebot
-from dota_parser_lib import info_match
 import SQLighter
-from telebot import types
-
-
-
-
+from time import sleep
+import dota_parser_lib as dpl
+import datetime
 
 bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
@@ -19,7 +16,7 @@ def add_user_id(message):
         sqler.add_user(message.chat.id)
     except Exception:
         pass
-    dota_info = info_match(sqler)
+    dota_info = dpl.info_match(sqler)
     bot.send_message(message.chat.id,"Welcome to Dota2bot")
     dota_info.give_today_matches()
 
@@ -71,6 +68,7 @@ def check_answer(message):
 
 
 """
+
 @bot.message_handler(commands=["322"])
 def get_user_id(message):
     bot.send_message(message.chat.id,
@@ -85,5 +83,30 @@ def get_user_id(message):
     bot.send_message(message.chat.id,message.chat.id)
 
 if __name__=="__main__":
-    bot.polling(none_stop=True)
+    counter = 0
+    today = datetime.datetime.today().day
+    # Инит бота
+    bot = telebot.TeleBot(config.token)
+    while True:
+        counter+=1
+        sqler = SQLighter.DotaSqlClient()
+        teams_with_id = sqler.select_all_dota_teams()
+        dp = dpl.dota_parser(sqler)
+        dp.update_matches()
+        #Каждое 4 обновление скрипта отдаем результаты матчей юзерам
+        if counter%4==0:
+            dota_info = dpl.info_match(sqler,bot)
+            dota_info.give_results_of_matches()
+            counter = 0
+        #Новый день - пишем матчи на сегодня
+        if today != datetime.datetime.today().day:
+            dota_info = dpl.info_match(sqler)
+            dota_info.give_today_matches(sqler)
+        try:
+            bot.polling(none_stop=True)
+        except Exception:
+            pass
+        sleep(15*60)
+
+
 

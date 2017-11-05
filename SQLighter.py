@@ -4,10 +4,10 @@ import pymysql
 class DotaSqlClient:
 
     def __init__(self):
-        self.connection = pymysql.connect(host='localhost',
+        self.connection = pymysql.connect(host='us-cdbr-iron-east-05.cleardb.net',
                                           port=3306,
-                                          user='root',
-                                          passwd='123',
+                                          user='b1c0c21dcb6edc',
+                                          passwd='3933112c',
                                           db='heroku_16092c835aedf9e',
                                           charset= "utf8")
         self.cursor = self.connection.cursor()
