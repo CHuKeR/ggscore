@@ -74,6 +74,12 @@ class dota_parser():
            if  (match[1] in teams or match[2] in teams):
                 self.sqler.update_result(match)
 
+    def parse_match(self, url):
+        driver = webdriver.Chrome('chromedriver.exe')
+        driver.get(url)
+        elem1 = driver.find_elements_by_class_name("t")
+        elem1[1].click()
+
 
 class info_match():
 
@@ -137,8 +143,3 @@ class info_match():
                     mess = self.make_message_future(match)
                     self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
 
-    def parse_match(url):
-        driver = webdriver.Chrome('chromedriver.exe')
-        driver.get(url)
-        elem1 = driver.find_elements_by_class_name("t")
-        elem1[1].click()
