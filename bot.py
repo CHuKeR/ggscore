@@ -18,7 +18,7 @@ def add_user_id(message):
         sqler.add_user(message.chat.id)
     except Exception:
         pass
-    dota_info = dpl.info_match(sqler)
+    dota_info = dpl.info_match(sqler, bot)
     bot.send_message(message.chat.id,"Welcome to Dota2bot")
     dota_info.give_today_matches()
 
