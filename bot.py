@@ -1,9 +1,7 @@
 import config
 import telebot
 import SQLighter
-from time import sleep
 import dota_parser_lib as dpl
-import datetime
 
 bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
