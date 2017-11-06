@@ -83,30 +83,11 @@ def get_user_id(message):
     bot.send_message(message.chat.id,message.chat.id)
 
 if __name__=="__main__":
-    counter = 0
-    today = datetime.datetime.today().day
-    # Инит бота
-    bot = telebot.TeleBot(config.token)
-    while True:
-        counter+=1
-        sqler = SQLighter.DotaSqlClient()
-        teams_with_id = sqler.select_all_dota_teams()
-        dp = dpl.dota_parser(sqler)
-        dp.update_matches()
-        #Каждое 4 обновление скрипта отдаем результаты матчей юзерам
-        if counter%4==0:
-            dota_info = dpl.info_match(sqler,bot)
-            dota_info.give_results_of_matches()
-            counter = 0
-        #Новый день - пишем матчи на сегодня
-        if today != datetime.datetime.today().day:
-            dota_info = dpl.info_match(sqler)
-            dota_info.give_today_matches(sqler)
+      while True:
         try:
             bot.polling(none_stop=True)
         except Exception:
             pass
-        sleep(15*60)
 
 
 
