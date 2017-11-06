@@ -2,6 +2,10 @@ import config
 import telebot
 import SQLighter
 import dota_parser_lib as dpl
+import os
+
+from flask import Flask, request
+server = Flask(__name__)
 
 bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
@@ -80,14 +84,16 @@ def get_user_id(message):
 def get_user_id(message):
     bot.send_message(message.chat.id,message.chat.id)
 
-if __name__=="__main__":
+@server.route(config.token , methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
 
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url="https://ireu.herokuapp.com/"+config.token)
+    return "!", 200
 
-    while True:
-        try:
-            bot.polling(none_stop=True)
-        except Exception:
-            pass
-
-
+server.run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
 
