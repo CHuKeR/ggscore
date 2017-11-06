@@ -20,7 +20,7 @@ def add_user_id(message):
         pass
     dota_info = dpl.info_match(sqler, bot)
     bot.send_message(message.chat.id,"Welcome to Dota2bot")
-    #dota_info.give_today_matches(message.chat.id)
+    dota_info.give_today_matches(message.chat.id)
 
 
 
