@@ -126,13 +126,16 @@ class info_match():
         #Обновляем день
         today = datetime.datetime.today().day
         month = datetime.datetime.today().month
+        print("Зашли")
         #Получаем матчи
         data_list = self.sqler.select_matches()
         if asked_user != None:
             user_list = self.sqler.select_all_user_teams(asked_user)
+            print("Удачно загрузили юзера")
         else:
             user_list = self.sqler.select_all_user_teams()
         for user in user_list:
+            print("пошли по челикам")
             self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
             if user[1]=="0;":
                 user_team_list = self.teams_with_id.values()
@@ -142,6 +145,7 @@ class info_match():
                 for team in user_prefer:
                     user_team_list.append(self.teams_with_id[team])
             for match in data_list:
+                print("Отправляем")
                 if (match[0] in user_team_list or match[1] in user_team_list) and match[5][:len(str(today))] == str(today):
                     mess = self.make_message_future(match)
                     self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
