@@ -12,7 +12,6 @@ if __name__ == "__main__":
     bot = telebot.TeleBot(config.token)
     while True:
         counter+=1
-        tic = time()
         sqler = SQLighter.DotaSqlClient()
         teams_with_id = sqler.select_all_dota_teams()
         dp = dota_parser_lib.dota_parser(sqler)
@@ -26,6 +25,6 @@ if __name__ == "__main__":
         if today != datetime.datetime.today().day:
             dota_info = dota_parser_lib.info_match(sqler)
             dota_info.give_today_matches(sqler)
-        toc = time()
-        print(toc - tic)
-        sleep(2)
+        sqler.close()
+        print("Update DB")
+        sleep(30*15)
