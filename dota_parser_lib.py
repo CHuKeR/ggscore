@@ -145,8 +145,8 @@ class info_match():
                 for team in user_prefer:
                     user_team_list.append(self.teams_with_id[team])
             for match in data_list:
-                print("Отправляем")
                 if (match[0] in user_team_list or match[1] in user_team_list) and match[5][:len(str(today))] == str(today):
                     mess = self.make_message_future(match)
+                    print("Отправляем")
                     self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
 
