@@ -27,9 +27,12 @@ class DotaSqlClient:
         return new_time
 
     # Получаем всех юзеров, которые зарегиститровались в приложении + команды, за которыми надо следить
-    def select_all_user_teams(self):
+    def select_all_user_teams(self, user = None):
         with self.connection:
-            sql = "SELECT * FROM dota_db"
+            if user == None:
+                sql = "SELECT * FROM dota_db"
+            else:
+                sql = "SELECT * FROM dota_db where user_id = '{}'".format(user)
             self.cursor.execute(sql)
             team_list = self.cursor.fetchall()
             return team_list

@@ -129,7 +129,7 @@ class info_match():
         #Получаем матчи
         data_list = self.sqler.select_matches()
         if asked_user != None:
-            user_list = [asked_user]
+            user_list = self.sqler.select_all_user_teams(asked_user)
         else:
             user_list = self.sqler.select_all_user_teams()
         for user in user_list:
