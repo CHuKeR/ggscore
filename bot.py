@@ -95,5 +95,6 @@ def webhook():
     bot.set_webhook(url="https://ireu.herokuapp.com/"+config.token)
     return "!", 200
 
-server.run(host="0.0.0.0", port=8443)
+bot.send_message(201501278,"Hello!")
+server.run(host="0.0.0.0",  port=os.environ.get('PORT', 5000))
 
