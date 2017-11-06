@@ -95,7 +95,7 @@ class info_match():
         return result
 
     def make_message_future(self,match):
-        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[1])
+        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[2])
         return result
 
     def give_results_of_matches(self):
@@ -122,13 +122,16 @@ class info_match():
                         self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
             self.sqler.delete_finisher_matches()
 
-    def give_today_matches(self):
+    def give_today_matches(self, asked_user = None):
         #Обновляем день
         today = datetime.datetime.today().day
         month = datetime.datetime.today().month
         #Получаем матчи
         data_list = self.sqler.select_matches()
-        user_list = self.sqler.select_all_user_teams()
+        if asked_user != None:
+            user_list = [asked_user]
+        else:
+            user_list = self.sqler.select_all_user_teams()
         for user in user_list:
             self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
             if user[1]=="0;":

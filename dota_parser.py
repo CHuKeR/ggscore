@@ -23,8 +23,8 @@ if __name__ == "__main__":
             counter = 0
         #Новый день - пишем матчи на сегодня
         if today != datetime.datetime.today().day:
-            dota_info = dota_parser_lib.info_match(sqler)
-            dota_info.give_today_matches(sqler)
+            dota_info = dota_parser_lib.info_match(sqler, bot)
+            dota_info.give_today_matches()
         sqler.close()
         print("Update DB")
         sleep(30*15)
