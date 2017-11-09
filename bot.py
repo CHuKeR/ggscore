@@ -8,6 +8,7 @@ from flask import Flask, request
 
 bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
+server = Flask(__name__)
 
 
 @bot.message_handler(commands=["start"])
@@ -82,9 +83,6 @@ def get_user_id(message):
 @bot.message_handler(commands=["get_id"])
 def get_user_id(message):
     bot.send_message(message.chat.id,message.chat.id)
-
-bot = telebot.TeleBot(config.token)
-server = Flask(__name__)
 
 @server.route("/"+config.token, methods=['POST'])
 def getMessage():
