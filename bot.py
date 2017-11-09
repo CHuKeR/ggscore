@@ -3,9 +3,7 @@ import telebot
 import SQLighter
 import dota_parser_lib as dpl
 import os
-from flask import Flask
-from requests import request
-import logging
+from flask import Flask, request
 
 
 bot = telebot.TeleBot(config.token)
