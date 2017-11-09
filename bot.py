@@ -3,9 +3,10 @@ import telebot
 import SQLighter
 import dota_parser_lib as dpl
 import os
+from flask import Flask
+from requests import request
+import logging
 
-from flask import Flask, request
-server = Flask(__name__)
 
 bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
@@ -84,7 +85,23 @@ def get_user_id(message):
 def get_user_id(message):
     bot.send_message(message.chat.id,message.chat.id)
 
-@server.route("/"+config.token , methods=['POST'])
+# CONFIG
+API_TOKEN = config.token
+
+bot = telebot.TeleBot(config.token)
+server = Flask(__name__)
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    bot.reply_to(message, message.text)
+
+
+@server.route("/"+config.token, methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "!", 200
@@ -95,6 +112,4 @@ def webhook():
     bot.set_webhook(url="https://ireu.herokuapp.com/"+config.token)
     return "!", 200
 
-bot.send_message(201501278,"Hello!")
-server.run(host="0.0.0.0",  port=os.environ.get('PORT', 5000))
-
+server.run(host="0.0.0.0", port=os.environ.get('PORT', 5000))

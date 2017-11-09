@@ -7,9 +7,11 @@ from urllib import request
 from time import sleep
 import dota_parser_lib as dpl
 
-sqler = SQLighter.DotaSqlClient()
-bot = telebot.TeleBot(config.token)
-dota_info = dpl.info_match(sqler, bot)
-dota_info.give_today_matches(201501278)
+#sqler = SQLighter.DotaSqlClient()
+#bot = telebot.TeleBot(config.token)
+#dota_info = dpl.info_match(sqler, bot)
+#dota_info.give_today_matches(201501278)
+file = open("webhook_cert.pem")
+print("Acces")
 
 
