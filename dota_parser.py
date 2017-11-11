@@ -17,7 +17,7 @@ def timed_job():
     print('Update DB')
 """
 
-@sched.scheduled_job('interval', hours=1,timezone = pytz.timezone("Europe/Moscow"))
+@sched.scheduled_job('interval', minutes=60, timezone = pytz.timezone("Europe/Moscow"))
 def timed_job():
     sqler = SQLighter.DotaSqlClient()
     bot = telebot.TeleBot(config.token)
