@@ -1,8 +1,8 @@
 import datetime
-from time import gmtime
+import pytz
 
 
 print(datetime.datetime.utcnow())
 
-datetime
-datetime.datetime.today()
+
+print(datetime.datetime.now(tz=pytz.timezone('Europe/Moscow')).day)

@@ -4,6 +4,7 @@ from selenium import webdriver
 import datetime
 import telebot
 import config
+import pytz
 
 class dota_parser():
 
@@ -124,8 +125,8 @@ class info_match():
 
     def give_today_matches(self, asked_user = None):
         #Обновляем день
-        today = datetime.datetime.today().day
-        month = datetime.datetime.today().month
+        today = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow')).day
+        month = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow')).month
         print("Зашли")
         #Получаем матчи
         data_list = self.sqler.select_matches()
