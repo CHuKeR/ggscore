@@ -132,12 +132,11 @@ class info_match():
         data_list = self.sqler.select_matches()
         if asked_user != None:
             user_list = self.sqler.select_all_user_teams(asked_user)
-            print("Удачно загрузили юзера")
         else:
             user_list = self.sqler.select_all_user_teams()
         for user in user_list:
-            print("пошли по челикам")
             self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
+            yes_matches = False
             if user[1]=="0;":
                 user_team_list = self.teams_with_id.values()
             else:
@@ -148,6 +147,9 @@ class info_match():
             for match in data_list:
                 if (match[0] in user_team_list or match[1] in user_team_list) and match[5][:len(str(today))] == str(today):
                     mess = self.make_message_future(match)
-                    print("Отправляем")
                     self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
+                    yes_matches = True
+            if yes_matches == "False":
+                self.bot.send_message(int(user[0]), "Нет мачтчей на сегодня!", parse_mode="Markdown")
+
 
