@@ -7,7 +7,7 @@ import pytz
 
 sched = BlockingScheduler()
 
-
+"""
 @sched.scheduled_job('interval', minutes=15 ,timezone = pytz.timezone("Europe/Moscow"))
 def timed_job():
     sqler = SQLighter.DotaSqlClient()
@@ -15,6 +15,7 @@ def timed_job():
     dp.update_matches()
     sqler.close()
     print('Update DB')
+"""
 
 @sched.scheduled_job('interval', hours=1,timezone = pytz.timezone("Europe/Moscow"))
 def timed_job():
