@@ -71,7 +71,7 @@ class DotaSqlClient:
     #Получаем список завершившихся матчей (т.е результат не пустой)
     def get_finished_matches(self):
         with self.connection:
-            sql = "select * from dota_matches where `result` is not null"
+            sql = "select * from dota_matches where `result` is not null ORDER BY match_time"
             self.cursor.execute(sql)
             return self.cursor.fetchall()
 
@@ -84,7 +84,7 @@ class DotaSqlClient:
     #Получаем все матчи (в теории матчей с результатом быть не должно)
     def select_matches(self):
         with self.connection:
-            sql = "select * from dota_matches"
+            sql = "select * from dota_matches ORDER BY match_time"
             self.cursor.execute(sql)
             return self.cursor.fetchall()
 
