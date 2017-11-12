@@ -102,8 +102,6 @@ class info_match():
     def give_results_of_matches(self):
         #Получаем завершенные матчи
             data_list = self.sqler.get_finished_matches()
-            #Инит бота
-            bot = telebot.TeleBot(config.token)
             #Список юзеров и команд
             user_list = self.sqler.select_all_user_teams()
             for user in user_list:
@@ -120,7 +118,13 @@ class info_match():
                     #Если эти матчи есть, то делаем результат, и выдаем это юзеру
                     if match[0] in user_team_list or match[1] in user_team_list:
                         mess = self.make_message_result(match)
-                        self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
+                        try:
+                            self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
+                        except telebot.apihelper.ApiException as e:
+                            desc = eval(e.text.replace("false", "False"))
+                            print()
+                            if desc== "Bad Request: chat not found":
+                                self.sqler.delete_user(user)
             self.sqler.delete_finisher_matches()
 
     def give_today_matches(self, asked_user = None):

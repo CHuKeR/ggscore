@@ -4,6 +4,7 @@ import SQLighter
 import dota_parser_lib as dpl
 import os
 from flask import Flask, request
+from telebot import types
 
 
 bot = telebot.TeleBot(config.token)
@@ -18,58 +19,43 @@ def add_user_id(message):
         sqler.add_user(message.chat.id)
     except Exception:
         pass
+
+    keyboard = types.InlineKeyboardMarkup()
+    callback_button = types.InlineKeyboardButton(text="Получить матчи на сегодня!", callback_data="today")
+    keyboard.add(callback_button)
+    # Под "остальным" понимаем состояние "0" - начало диалога
+    bot.send_message(message.chat.id,"Добро пожаловать в IREU - бот, который сообщает вам о киберспортивных матчах."
+                                     " На настоящий момент реализованы оповещения о матчах по Dota2. Каждый день в 0:00 по МСК вы получаете мачти на день. "
+                                     "По заверщении серии вы получаете результат. Пока что это все, но у нас много планов на будущее. Если что - /help вам в помощь! :),",reply_markup=keyboard)
+
+
+
+@bot.message_handler(commands=["help"])
+def add_user_id(message):
+    bot.send_message(message.chat.id,"Привет! Давай я тебе расскажу, какие команды тут есть:"
+                                     "/start - если ты что-то забыл, я еще раз расскажу, кто я такой :)"
+                                     "/today - выдает матчи на сегодня. Ты ничего не пропустишь!"
+                                     "+ тут есть секретная команда, если найдете - молодцы!"
+                                     "По всем ошибкам и прочему писать: https://vk.com/prosto_chuker или @Chukerr в телеграмме.")
+
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    # Если сообщение из чата с ботом
+    if call.message:
+        if call.data == "today":
+            sqler = SQLighter.DotaSqlClient()
+            dota_info = dpl.info_match(sqler, bot)
+            dota_info.give_today_matches(call.message.chat.id)
+
+
+@bot.message_handler(commands=["today"])
+def add_user_id(message):
+    sqler = SQLighter.DotaSqlClient()
     dota_info = dpl.info_match(sqler, bot)
-    bot.send_message(message.chat.id,"Welcome to Dota2bot")
     dota_info.give_today_matches(message.chat.id)
 
-
-
-"""
-@bot.message_handler(commands=["setting"])
-def get_user_id(message):
-    utils.enable_settings_for_user(message.chat.id)
-    markup = utils.generate_markup(settings)
-    mess = utils.print_keyboard(settings)
-    bot.send_message(message.chat.id,
-    """
-#    Привет, давай настроим бота.
-#Выбери, что настраивать:\n""" + mess,reply_markup=markup)
-"""
-#Проверка на включенные настройки
-@bot.message_handler(func=lambda message: (message.text) == "Закрыть и сохранить настройки", content_types=['text'])
-def check_close(message):
-    bot.send_message(message.chat.id,utils.close_settings(message.chat.id),reply_markup=telebot.types.ReplyKeyboardRemove())
-
-#Проверка на включенные настройки
-@bot.message_handler(func=lambda message: utils.get_enable_setting(message.chat.id) != None, content_types=['text'])
-def check_answer(message):
-        # Если пользователь в настройках
-        settings_mode = utils.get_setting_mode(message.chat.id)
-        if not settings_mode:
-            # Проверяем, выбрано ли что-то
-            if message.text == "1" or message.text == "Оповещения о будущих матчах":
-                utils.enable_mode_for_user(message.chat.id,"10")
-            else:
-                bot.send_message(message.chat.id, 'Нет такого варианта =О!')
-        elif settings_mode[0]=="1":
-            if settings_mode[1]=="0":
-                modes = ["Не присылать", "Только дневные (8:00-24:00)", "Только ночные (0:00-8:00)", "Присылать все!"]
-                if message.text in modes:
-                    utils.enable_mode_for_user(message.chat.id,"1{}".format(modes.index(message.text)+1))
-                else:
-                    utils.print_keyboard(modes)
-            else:
-                sql_client = SQLighter.MySqlClient
-                sql_client.change_setting(message.chat.id,settings_mode[1])
-
-@bot.message_handler(func=lambda message: utils.get_enable_setting(message.chat.id) == None, content_types=['text'])
-def check_answer(message):
-        bot.send_message(message.chat.id, 'Нет такого варианта =О! haha')
-
-
-
-
-"""
 
 @bot.message_handler(commands=["322"])
 def get_user_id(message):
@@ -80,9 +66,6 @@ def get_user_id(message):
 """
 )
 
-@bot.message_handler(commands=["get_id"])
-def get_user_id(message):
-    bot.send_message(message.chat.id,message.chat.id)
 
 @server.route("/"+config.token, methods=['POST'])
 def getMessage():

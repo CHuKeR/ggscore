@@ -100,3 +100,8 @@ class DotaSqlClient:
         with self.connection:
             sql = "insert into dota_db(user_id) values('{}')".format(user_id)
             self.cursor.execute(sql)
+
+    def delete_user(self,user_id):
+        with self.connection:
+            sql = "delete from dota_db where 'user_id' = '{}'".format(user_id)
+            self.cursor.execute(sql)
