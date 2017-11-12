@@ -1,12 +1,16 @@
 import SQLighter
 import telebot
 import config
-import time
 
-tic = time.time()
-string = '{"ok":false,"error_code":400,"description":"Bad Request: chat not found"}'
-lol = eval(string.replace("false","False"))
-print(lol["description"])
-time.sleep(2)
-toc = time.time()
-print(toc-tic)
+bot = telebot.TeleBot(config.token)
+sqler = SQLighter.DotaSqlClient()
+
+user_list = sqler.select_all_user_teams()
+for user in user_list:
+    try:
+        bot.send_message(int(user[0]), "lolkek", parse_mode="Markdown")
+    except telebot.apihelper.ApiException as e:
+        desc = eval(e.text.replace("false", "False"))
+        print()
+        if desc == "Bad Request: chat not found":
+            sqler.delete_user(user)

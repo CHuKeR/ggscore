@@ -121,7 +121,7 @@ class info_match():
                         try:
                             self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
                         except telebot.apihelper.ApiException as e:
-                            desc = eval(e.text.replace("false", "False"))
+                            desc = eval(e.result.text.replace("false", "False"))
                             print()
                             if desc== "Bad Request: chat not found":
                                 self.sqler.delete_user(user)
