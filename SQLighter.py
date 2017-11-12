@@ -52,8 +52,8 @@ class DotaSqlClient:
         with self.connection:
             self.cursor.execute("""
                 INSERT INTO dota_matches(id, team1, team2, tournament, match_time) 
-                VALUES('{}','{}','{}','{}','{}') ON DUPLICATE KEY UPDATE match_time='{}';"""
-                                    .format(match[0],match[1],match[2],match[3],self.make_true_data(match[4]),self.make_true_data(match[4])))
+                VALUES('{}','{}','{}','{}','{}') ON DUPLICATE KEY UPDATE match_time='{}',team1='{}',team2='{}';"""
+                                    .format(match[0],match[1],match[2],match[3],self.make_true_data(match[4]),self.make_true_data(match[4]),match[1],match[2]))
 
     #Обновить результат по id матча
     def update_result(self,match):
