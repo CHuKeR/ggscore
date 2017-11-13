@@ -19,7 +19,6 @@ def add_user_id(message):
         sqler.add_user(message.chat.id)
     except Exception:
         pass
-
     keyboard = types.InlineKeyboardMarkup()
     callback_button = types.InlineKeyboardButton(text="Получить матчи на сегодня!", callback_data="today")
     keyboard.add(callback_button)

@@ -92,11 +92,11 @@ class info_match():
         self.bot = bot
 
     def make_message_result(self,match):
-        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nResult: {}".format(match[0], match[1], match[2], match[3])
+        result = "*{} * -vs - * {} *\nTournament: *{} *\nResult: {}".format(match[0], match[1], match[2], match[3])
         return result
 
     def make_message_future(self,match):
-        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[2])
+        result = "*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[2])
         return result
 
     def give_results_of_matches(self):
