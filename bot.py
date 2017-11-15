@@ -46,11 +46,11 @@ def add_user_id(message):
 
 @bot.message_handler(commands=["help"])
 def add_user_id(message):
-    bot.send_message(message.chat.id,"Привет! Давай я тебе расскажу, какие команды тут есть:"
-                                     "/start - если ты что-то забыл, я еще раз расскажу, кто я такой :)"
-                                     "/today - выдает матчи на сегодня. Ты ничего не пропустишь!"
-                                     "/setting - настройки."
-                                     "+ тут есть секретная команда, если найдете - молодцы!"
+    bot.send_message(message.chat.id,"Привет! Давай я тебе расскажу, какие команды тут есть:\n"
+                                     "/start - если ты что-то забыл, я еще раз расскажу, кто я такой :)\n"
+                                     "/today - выдает матчи на сегодня. Ты ничего не пропустишь!\n"
+                                     "/setting - настройки.\n"
+                                     "+ тут есть секретная команда, если найдете - молодцы!\n"
                                      "По всем ошибкам и прочему писать: https://vk.com/prosto_chuker или @Chukerr в телеграмме.")
 
 @bot.callback_query_handler(func=lambda call: True and call.data == "close_settings")
