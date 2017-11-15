@@ -10,6 +10,7 @@ from telebot import types
 bot = telebot.TeleBot(config.token)
 settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
 server = Flask(__name__)
+sqler = SQLighter.DotaSqlClient()
 
 callback_button_exit = types.InlineKeyboardButton(text="Закрыть настройки",
                                                      callback_data="close_settings")
@@ -17,7 +18,6 @@ callback_button_exit = types.InlineKeyboardButton(text="Закрыть наст�
 
 @bot.message_handler(commands=["start"])
 def add_user_id(message):
-    sqler = SQLighter.DotaSqlClient()
     try:
         sqler.add_user(message.chat.id)
     except Exception:
