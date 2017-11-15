@@ -22,6 +22,26 @@ class DotaSqlClient:
                                           charset= "utf8")
         self.cursor = self.connection.cursor()
 
+
+
+        #Методы, используемые для парсера сайта
+
+    # Вставить будущий матч без результата (id, team1, team2, tournament, match_time)
+    def insert_match(self, match):
+            with self.connection:
+                self.cursor.execute("""
+                    INSERT INTO dota_matches(id, team1, team2, tournament, match_time) 
+                    VALUES('{}','{}','{}','{}','{}') ON DUPLICATE KEY UPDATE match_time='{}',team1='{}',team2='{}';"""
+                                    .format(match[0], match[1], match[2], match[3], self.make_true_data(match[4]),
+                                            self.make_true_data(match[4]), match[1], match[2]))
+
+    # Обновить результат по id матча
+    def update_result(self, match):
+            with self.connection:
+                self.cursor.execute("""
+                                    UPDATE dota_matches SET result = '{}' WHERE id = '{}'"""
+                                    .format(match[5], match[0]))
+
     # Сменит время с текста на цифры (а то БД жалуется)
     def make_true_data(self,old_time):
         old_time = old_time.split(",")
@@ -35,6 +55,8 @@ class DotaSqlClient:
         new_time = "{}.{}, {}".format(day, new_mount, timeq)
         return new_time
 
+
+
     # Получаем всех юзеров, которые зарегиститровались в приложении + команды, за которыми надо следить
     def select_all_user_teams(self, user = None):
         with self.connection:
@@ -47,29 +69,23 @@ class DotaSqlClient:
             return team_list
 
     #Получаем список всех команд по Dota2 со всех регионов
-    def select_all_dota_teams(self):
+    def select_all_dota_teams(self, region = None):
         with self.connection:
-            sql = "SELECT team_name, id from dota_teams"
+            if region==None:
+                sql = "SELECT team_name, id from dota_teams"
+            else:
+                sql = "SELECT team_name, id from dota_teams where region = '{}'".format(region)
             self.cursor.execute(sql)
             dota_teams = self.cursor.fetchall()
             dota_teams_dict = dict((y, x) for x, y in dota_teams)
             return dota_teams_dict
 
-
-    #Вставить будущий матч без результата (id, team1, team2, tournament, match_time)
-    def insert_match(self,match):
+    def update_user_pref(self, user, new_pref):
         with self.connection:
-            self.cursor.execute("""
-                INSERT INTO dota_matches(id, team1, team2, tournament, match_time) 
-                VALUES('{}','{}','{}','{}','{}') ON DUPLICATE KEY UPDATE match_time='{}',team1='{}',team2='{}';"""
-                                    .format(match[0],match[1],match[2],match[3],self.make_true_data(match[4]),self.make_true_data(match[4]),match[1],match[2]))
+            self.cursor.execute(
+                "REPLACE INTO dota_db (`user_id`, `teams_dota`) VALUES('{}', '{}');".format(user, new_pref))
 
-    #Обновить результат по id матча
-    def update_result(self,match):
-        with self.connection:
-            self.cursor.execute("""
-                                UPDATE dota_matches SET result = '{}' WHERE id = '{}'"""
-                                .format(match[5], match[0]))
+
 
     #Вставить команду в базу данных
     def insert_team(self,region,team_name):
@@ -100,10 +116,6 @@ class DotaSqlClient:
     def close(self):
         self.connection.close()
 
-    def change_setting(self, chat_id, new_setting):
-        with self.connection:
-            self.cursor.execute(
-                "REPLACE INTO dota_db (`user_id`, `news_flag`) VALUES('{}', '{}');".format(chat_id, new_setting))
 
     def add_user(self,user_id):
         with self.connection:
