@@ -276,6 +276,7 @@ class info_match():
 
     def update_loc_res(self,winner,loc_res, team1, team2):
         loc_res = loc_res.split(":")
+        print(winner,loc_res,team1,team2)
         if winner.lower()==team1.lower():
             new_res = str(int(loc_res[0])+1)+":"+loc_res[1]
         elif winner.lower()==team2.lower():
