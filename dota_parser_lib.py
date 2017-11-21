@@ -155,7 +155,7 @@ class info_match():
                         mess = self.make_message_result(match)
                         # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
                         try:
-                            pic = self.get_tournament_res(6,driver)
+                            pic = self.get_tournament_res(match[6],driver)
                             mess = "Турнирная таблица "+ match[2]
                         except Exception:
                             print("Ошибка с картинкой турнира!")
@@ -241,7 +241,7 @@ class info_match():
             match_list = match.find_elements_by_tag_name("a")
             for match in match_list:
                 if team1 in match.text or team2 in match.text:
-                    print(match.get_attribute("href"))
+                    return match.get_attribute("href")
 
     def parse_live_match(self, driver,match):
         driver.get("http://game-tournaments.com"+match[7])
