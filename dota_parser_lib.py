@@ -235,14 +235,13 @@ class info_match():
         url = "https://www.trackdota.com"
         driver.get(url)
         toc = time()
-        print("Open url: {}".format(toc-tic))
-        table_match = driver.find_elements_by_tag_name("a")
-        for match in table_match:
-            if match.get_attribute("class")=="box match live":
-                team_list = match.find_elements_by_class_name("team_name")
-                if team1 in team_list[0].text or team2 in team_list[0].text or\
-                                team1 in team_list[1].text or team2 in team_list[1].text:
-                    return match.get_attribute("href")
+        print("Open url: {}".format(toc - tic))
+        league_list = driver.find_elements_by_xpath("//*[@class='league_wrapper ng-scope']")
+        for match in league_list:
+            match_list = match.find_elements_by_tag_name("a")
+            for match in match_list:
+                if team1 in match.text or team2 in match.text:
+                    print(match.get_attribute("href"))
 
     def parse_live_match(self, driver,match):
         driver.get("http://game-tournaments.com"+match[7])
