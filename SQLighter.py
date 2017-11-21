@@ -147,7 +147,7 @@ class DotaSqlClient:
     #Удаляем юзера нахер
     def delete_user(self,user_id):
         with self.connection:
-            sql = "delete from dota_db where 'user_id' = '{}'".format(user_id)
+            sql = "delete from dota_db where user_id = '{}'".format(user_id)
             self.cursor.execute(sql)
 
     #Вставить команду в базу данных
