@@ -284,7 +284,7 @@ class info_match():
         return new_res
 
     def get_tournament_res(self, url, driver):
-        driver.get("http://game-tournaments.com/"+url)
+        driver.get("http://game-tournaments.com"+url)
         element =driver.find_elements_by_class_name("col-sm-12")[0]
         location = element.location
         size = element.size
