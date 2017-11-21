@@ -149,7 +149,7 @@ def callback_inline4(call):
         user_pref = sqler.select_all_user_teams(call.message.chat.id)
         team_in = False
         if len(user_pref) == 1 and user_pref[0][1]== "0;":
-            sqler.delete_user_pref(call.message.chat.id)
+            sqler.delete_user(call.message.chat.id)
         else:
             for team in user_pref:
                 if call.data == team[1]:
