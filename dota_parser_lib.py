@@ -4,7 +4,6 @@ from selenium import webdriver
 import datetime
 import telebot
 import config
-import pytz
 
 class dota_parser():
 
@@ -86,76 +85,61 @@ class info_match():
 
     sqler = ""
 
-
     def __init__(self,sqler, bot):
         self.sqler = sqler
         self.teams_with_id = sqler.select_all_dota_teams()
         self.bot = bot
 
-    def make_user_team_list(self, user_prefer):
-        if user_prefer == "0;":
-            user_team_list = self.teams_with_id.values()
-        # Иначе
-        else:
-            user_prefer = user_prefer.split(";")
-            user_team_list = []
-            for team in user_prefer[:-1]:
-                user_team_list.append(self.teams_with_id[int(team)])
-        return user_team_list
-
     def make_message_result(self,match):
-        result = "*{} * -vs - * {} *\nTournament: *{} *\nResult: {}".format(match[0], match[1], match[2], match[3])
+        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nResult: {}".format(match[0], match[1], match[2], match[3])
         return result
 
     def make_message_future(self,match):
-        result = "*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[2])
+        result = "Dota2\n*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[1])
         return result
 
     def give_results_of_matches(self):
         #Получаем завершенные матчи
             data_list = self.sqler.get_finished_matches()
-            #Список юзеров и их выбранных команд
+            #Инит бота
+            bot = telebot.TeleBot(config.token)
+            #Список юзеров и команд
             user_list = self.sqler.select_all_user_teams()
             for user in user_list:
                 for match in data_list:
                     #Если 0 - то все матчи, иначе смотрим, что есть
-                    user_team_list = self.make_user_team_list(user[1])
+                    if user[1]=="0;":
+                        user_team_list = self.teams_with_id.values()
+                    else:
+                        #Получаем список матчей и загружаем его в список
+                        user_prefer = user[1].split(";")
+                        user_team_list = []
+                        for team in user_prefer:
+                            user_team_list.append(self.teams_with_id[team])
                     #Если эти матчи есть, то делаем результат, и выдаем это юзеру
                     if match[0] in user_team_list or match[1] in user_team_list:
                         mess = self.make_message_result(match)
-                        # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
-                        try:
-                            self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
-                        except telebot.apihelper.ApiException as e:
-                            desc = eval(e.result.text.replace("false", "False"))
-                            if desc== "Bad Request: chat not found":
-                                self.sqler.delete_user(user)
-            #В конце удаляем завершенные матчи
+                        self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
             self.sqler.delete_finisher_matches()
 
-    def give_today_matches(self, asked_user = None):
-        #asked_user вызывается, если пользователь запрашивает матчи с бота.
-        #Обновляем день по МСК
-        today = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow')).day
-        month = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow')).month
+    def give_today_matches(self):
+        #Обновляем день
+        today = datetime.datetime.today().day
+        month = datetime.datetime.today().month
         #Получаем матчи
         data_list = self.sqler.select_matches()
-        if asked_user != None:
-            user_list = self.sqler.select_all_user_teams(asked_user)
-        else:
-            user_list = self.sqler.select_all_user_teams()
+        user_list = self.sqler.select_all_user_teams()
         for user in user_list:
             self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
-            #Есть ли вообще матчи?
-            yes_matches = False
-            #Если все команды
-            user_team_list = self.make_user_team_list(user[1])
+            if user[1]=="0;":
+                user_team_list = self.teams_with_id.values()
+            else:
+                user_prefer = user[1].split(";")
+                user_team_list = []
+                for team in user_prefer:
+                    user_team_list.append(self.teams_with_id[team])
             for match in data_list:
                 if (match[0] in user_team_list or match[1] in user_team_list) and match[5][:len(str(today))] == str(today):
                     mess = self.make_message_future(match)
                     self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
-                    yes_matches = True
-            if yes_matches == False:
-                self.bot.send_message(int(user[0]), "Нет мачтчей на сегодня!", parse_mode="Markdown")
-
 
