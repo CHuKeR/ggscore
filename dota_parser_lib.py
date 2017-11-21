@@ -214,7 +214,7 @@ class info_match():
         match_list = self.sqler.select_live_matches()
         final_list = []
         for match in match_list:
-            if match[10] == None:
+            if match[10] == None or match[10]=="None":
                 href = self.find_track_dota_link(match[0],match[1],driver)
                 self.sqler.set_td_link(match[4],href)
             picture = self.parse_live_match(driver,match)
