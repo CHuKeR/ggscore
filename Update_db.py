@@ -1,5 +1,6 @@
 import SQLighter
 import dota_parser_lib
+from time import sleep
 
 
 if __name__ == "__main__":
@@ -8,3 +9,4 @@ if __name__ == "__main__":
     dp.update_matches()
     sqler.close()
     print('Update DB from cron')
+
