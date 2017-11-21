@@ -134,6 +134,7 @@ def callback_inline3(call):
             keyboard.add(callback_button)
             mess = "Выбираем команды, которые хотим добавить."
         else:
+            sqler.delete_user(call.message.chat.id)
             sqler.insert_user_pref(call.message.chat.id, "0;")
             bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Все, следим за всеми!")
             callback_button = types.InlineKeyboardButton(text="Назад",
