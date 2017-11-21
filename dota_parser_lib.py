@@ -277,11 +277,11 @@ class info_match():
     def update_loc_res(self,winner,loc_res, team1, team2):
         loc_res = loc_res.split(":")
         print(winner,loc_res,team1,team2)
-        if winner.lower()==team1.lower():
+        if winner.lower() in team1.lower():
             new_res = str(int(loc_res[0])+1)+":"+loc_res[1]
-        elif winner.lower()==team2.lower():
+        elif winner.lower() in team2.lower():
             new_res = loc_res[0]+":"+str(int(loc_res[1])+1)
-        else: new_res = "IT'S A TROUBE!"
+        else: new_res = "TROUBE"
         return new_res
 
     def get_tournament_res(self, url, driver):
