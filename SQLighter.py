@@ -4,6 +4,7 @@ from sys import platform
 class DotaSqlClient:
 
     def __init__(self):
+        print(platform)
         if platform == "win32":
             self.connection = pymysql.connect(host='localhost',
                                               port=3306,
@@ -11,9 +12,7 @@ class DotaSqlClient:
                                               passwd='123',
                                               db='heroku_16092c835aedf9e',
                                               charset="utf8")
-
         else:
-
             self.connection = pymysql.connect(host='us-cdbr-iron-east-05.cleardb.net',
                                           port=3306,
                                           user='b1c0c21dcb6edc',
