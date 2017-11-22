@@ -178,7 +178,7 @@ class info_match():
         else:
             user_team_list = self.sqler.select_all_user_teams()
         user_list = self.make_user_team_list(user_team_list)
-        for user in user_list:
+        for user in user_list.items():
             self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
             #Есть ли вообще матчи?
             yes_matches = False
