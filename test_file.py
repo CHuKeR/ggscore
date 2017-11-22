@@ -26,19 +26,3 @@ match_list = [
 ]
 match_q = ["DD","Empire","Galaxy Battles II: Emerging Worlds",None,"58557",None,"/dota-2/galaxy-battles-major/cis-2","/dota-2/galaxy-battles-major/cis-2/double-dimension-vs-empire-58557","1","0","None","0:0"]
 
-
-def make_user_team_list(user_team_list):
-    user_team_dict = {}
-    for user in user_team_list:
-        try:
-            elem = user_team_dict[user[0]]
-            user_team_dict[user[0]] = elem + user[1]
-        except KeyError:
-            user_team_dict[user[0]] = user[1]
-    return user_team_dict
-
-data_list = sqler.select_matches()
-user_team_list = sqler.select_all_user_teams()
-user_list = make_user_team_list(user_team_list)
-for user in user_list.items():
-    print(user[0])

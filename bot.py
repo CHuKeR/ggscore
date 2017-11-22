@@ -16,7 +16,7 @@ callback_button_exit = types.InlineKeyboardButton(text="Закрыть наст�
 @bot.message_handler(commands=["start"])
 def add_user_id(message):
     sqler = SQLighter.DotaSqlClient()
-    if len(sqler.select_all_user_teams())>0:
+    if len(sqler.select_all_user_teams(message.chat.id))>0:
         try:
 
             sqler.add_user(message.chat.id)
