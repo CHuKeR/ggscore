@@ -97,7 +97,7 @@ class info_match():
     def make_user_team_list(self, user_team_list):
         user_team_dict = {}
         for user in user_team_list:
-            print(user)
+            print(len(user_team_list))
             try:
                 elem = user_team_dict[user[0]]
                 user_team_dict[user[0]] = elem+user[1]
