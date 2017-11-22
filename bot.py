@@ -40,7 +40,6 @@ def add_user_id(message):
 
 @bot.message_handler(commands=["today"])
 def add_user_id(message):
-    sqler = SQLighter.DotaSqlClient()
     dota_info = dpl.info_match(sqler, bot)
     dota_info.give_today_matches(message.chat.id)
 

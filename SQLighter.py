@@ -3,8 +3,8 @@ from sys import platform
 
 class DotaSqlClient:
 
+
     def __init__(self):
-        print(platform)
         self.connection = pymysql.connect(host='us-cdbr-iron-east-05.cleardb.net',
                                           port=3306,
                                           user='b1c0c21dcb6edc',

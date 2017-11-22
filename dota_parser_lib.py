@@ -166,7 +166,6 @@ class info_match():
                             if desc== "Bad Request: chat not found":
                                 self.sqler.delete_user(user)
 
-
     def give_today_matches(self, asked_user = None):
         #asked_user вызывается, если пользователь запрашивает матчи с бота.
         #Обновляем день по МСК
