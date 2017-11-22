@@ -23,5 +23,4 @@ if __name__ == "__main__":
     dota_info.give_tour_pic(driver)
     #В конце удаляем завершенные матчи
     sqler.delete_finisher_matches()
-    sqler.close()
     print('I try to tell all results!.')
