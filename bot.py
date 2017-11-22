@@ -8,15 +8,14 @@ from telebot import types
 
 
 bot = telebot.TeleBot(config.token)
-settings = ["Оповещения о будущих матчах","Закрыть и сохранить настройки"]
 server = Flask(__name__)
-sqler = SQLighter.DotaSqlClient()
 callback_button_exit = types.InlineKeyboardButton(text="Закрыть настройки",
                                                      callback_data="close_settings")
 
 
 @bot.message_handler(commands=["start"])
 def add_user_id(message):
+    sqler = SQLighter.DotaSqlClient()
     if len(sqler.select_all_user_teams())>0:
         try:
 
@@ -24,6 +23,7 @@ def add_user_id(message):
         except Exception as e:
             print(e)
     # Под "остальным" понимаем состояние "0" - начало диалога
+    sqler.close()
     bot.send_message(message.chat.id, "Добро пожаловать в IREU - бот, который сообщает вам о киберспортивных матчах.\n"
                                       " На настоящий момент реализованы оповещения о матчах по Dota2. Каждый день в 0:00 по МСК вы получаете мачти на день. \n"
                                       "По заверщении серии вы получаете результат. Пока что это все, но у нас много планов на будущее. Если что - /help вам в помощь!\n"
@@ -41,8 +41,10 @@ def add_user_id(message):
 
 @bot.message_handler(commands=["today"])
 def add_user_id(message):
+    sqler = SQLighter.DotaSqlClient()
     dota_info = dpl.info_match(sqler, bot)
     dota_info.give_today_matches(message.chat.id)
+    sqler.close()
 
 @bot.message_handler(commands=["help"])
 def add_user_id(message):
@@ -109,6 +111,7 @@ def get_key(d, value):
 @bot.callback_query_handler(func=lambda call: True and call.data[:5]== "team_")
 def callback_inline3(call):
     if call.message:
+        sqler = SQLighter.DotaSqlClient()
         print(call.data)
         keyboard = types.InlineKeyboardMarkup()
         if call.data[5:] != "reset":
@@ -140,6 +143,7 @@ def callback_inline3(call):
             mess = "Команды сброшены, что изволите делать дальше?"
 
         keyboard.add(callback_button_exit)
+        sqler.close()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text=mess, reply_markup=keyboard)
 
@@ -147,6 +151,7 @@ def callback_inline3(call):
 @bot.callback_query_handler(func=lambda call: True and call.data[-1:]== ";" and len(call.data)<4)
 def callback_inline4(call):
     if call.message:
+        sqler = SQLighter.DotaSqlClient()
         user_pref = sqler.select_all_user_teams(call.message.chat.id)
         team_in = False
         if len(user_pref) == 1 and user_pref[0][1]== "0;":
@@ -157,8 +162,10 @@ def callback_inline4(call):
                     team_in = True
         if team_in == False:
             sqler.insert_user_pref(call.message.chat.id, call.data)
+            sqler.close()
             bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Добавили!")
         else:
+            sqler.close()
             bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Вы уже следите за этой командой!")
 
 
@@ -167,87 +174,95 @@ def callback_inline4(call):
 #Вывод списка команд юзера
 @bot.callback_query_handler(func=lambda call: True and call.data == "setting_alerts")
 def callback_inline5(call):
-    user_pref = sqler.select_all_user_teams(user=call.message.chat.id)
-    keyboard = types.InlineKeyboardMarkup()
-    if len(user_pref) == 1 and user_pref[0][1]== "0;":
-        mess = "Для начала выберите команды, чтобы настроить оповещения"
-    else:
-        team_list = sqler.select_all_dota_teams()
-        numb = 0
-        butt_list = []
-        for team in user_pref:
-            team_name = team_list[int(team[1][:-1])]
-            numb+=1
-            callback_button = types.InlineKeyboardButton(text=team_name,
-                                                         callback_data="alerts_"+team[1])
-            butt_list.append(callback_button)
-            if numb == 2:
-                keyboard.row(butt_list[0],butt_list[1])
-                numb=0
-                butt_list=[]
-        if numb==1:
-            keyboard.add(butt_list[0])
-        mess = "Выберите команды для настроек изменений."
-    callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting")
-    keyboard.add(callback_button)
-    keyboard.add(callback_button_exit)
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text=mess, reply_markup=keyboard)
+    if call.message:
+        sqler = SQLighter.DotaSqlClient()
+        user_pref = sqler.select_all_user_teams(user=call.message.chat.id)
+        keyboard = types.InlineKeyboardMarkup()
+        if len(user_pref) == 1 and user_pref[0][1]== "0;":
+            mess = "Для начала выберите команды, чтобы настроить оповещения"
+        else:
+            team_list = sqler.select_all_dota_teams()
+            numb = 0
+            butt_list = []
+            for team in user_pref:
+                team_name = team_list[int(team[1][:-1])]
+                numb+=1
+                callback_button = types.InlineKeyboardButton(text=team_name,
+                                                             callback_data="alerts_"+team[1])
+                butt_list.append(callback_button)
+                if numb == 2:
+                    keyboard.row(butt_list[0],butt_list[1])
+                    numb=0
+                    butt_list=[]
+            if numb==1:
+                keyboard.add(butt_list[0])
+            mess = "Выберите команды для настроек изменений."
+        callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting")
+        keyboard.add(callback_button)
+        keyboard.add(callback_button_exit)
+        sqler.close()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  text=mess, reply_markup=keyboard)
 
 @bot.callback_query_handler(func=lambda call: True and call.data[:7] == "alerts_")
 def callback_inline6(call):
-    user_pref = sqler.select_all_user_teams(user=call.message.chat.id, team=call.data[7:])
-    keyboard = types.InlineKeyboardMarkup()
-    for team in user_pref:
-        team_list = sqler.select_all_dota_teams()
-        mess = team_list[int(team[1][:-1])]
-        if team[2]==0:
-            add_match = "Серии"
-        else:
-            add_match = "Матча"
-        after_match = types.InlineKeyboardButton(text="Результат отображется после "+ add_match,callback_data="change_mtc"+team[1])
-        keyboard.add(after_match)
-        if team[3] == 0:
-            add_match = "не показывать."
-        else:
-            add_match = "показывать"
-        after_tour = types.InlineKeyboardButton(text="Турнрирную сетку после матча "+ add_match,callback_data="change_trn"+team[1])
-        keyboard.add(after_tour)
-    callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting_alerts")
-    keyboard.add(callback_button)
-    keyboard.add(callback_button_exit)
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text="Настройки для "+mess, reply_markup=keyboard)
+    if call.message:
+        sqler = SQLighter.DotaSqlClient()
+        user_pref = sqler.select_all_user_teams(user=call.message.chat.id, team=call.data[7:])
+        keyboard = types.InlineKeyboardMarkup()
+        for team in user_pref:
+            team_list = sqler.select_all_dota_teams()
+            mess = team_list[int(team[1][:-1])]
+            if team[2]==0:
+                add_match = "Серии"
+            else:
+                add_match = "Матча"
+            after_match = types.InlineKeyboardButton(text="Результат отображется после "+ add_match,callback_data="change_mtc"+team[1])
+            keyboard.add(after_match)
+            if team[3] == 0:
+                add_match = "не показывать."
+            else:
+                add_match = "показывать"
+            after_tour = types.InlineKeyboardButton(text="Турнрирную сетку после матча "+ add_match,callback_data="change_trn"+team[1])
+            keyboard.add(after_tour)
+        callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting_alerts")
+        keyboard.add(callback_button)
+        keyboard.add(callback_button_exit)
+        sqler.close()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  text="Настройки для "+mess, reply_markup=keyboard)
 
 @bot.callback_query_handler(func=lambda call: True and call.data[:7] == "change_")
 def callback_inline7(call):
     if call.message:
+        sqler = SQLighter.DotaSqlClient()
         if call.data[7:10]=="mtc":
             sqler.update_user_pref(call.message.chat.id, call.data[10:], 0)
         else:
             sqler.update_user_pref(call.message.chat.id, call.data[10:], 1)
         user_pref = sqler.select_all_user_teams(user=call.message.chat.id, team=call.data[10:])
-    keyboard = types.InlineKeyboardMarkup()
-    for team in user_pref:
-        team_list = sqler.select_all_dota_teams()
-        mess = team_list[int(team[1][:-1])]
-        if team[2]==0:
-            add_match = "Серии"
-        else:
-            add_match = "Матча"
-        after_match = types.InlineKeyboardButton(text="Результат отображется после "+ add_match,callback_data="change_mtc"+team[1])
-        keyboard.add(after_match)
-        if team[3] == 0:
-            add_match = "не показывать."
-        else:
-            add_match = "показывать"
-        after_tour = types.InlineKeyboardButton(text="Турнрирную сетку после матча "+ add_match,callback_data="change_trn"+team[1])
-        keyboard.add(after_tour)
-    callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting_alerts")
-    keyboard.add(callback_button)
-    keyboard.add(callback_button_exit)
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text="Настройки для "+mess, reply_markup=keyboard)
+        keyboard = types.InlineKeyboardMarkup()
+        for team in user_pref:
+            team_list = sqler.select_all_dota_teams()
+            mess = team_list[int(team[1][:-1])]
+            if team[2]==0:
+                add_match = "Серии"
+            else:
+                add_match = "Матча"
+            after_match = types.InlineKeyboardButton(text="Результат отображется после "+ add_match,callback_data="change_mtc"+team[1])
+            keyboard.add(after_match)
+            if team[3] == 0:
+                add_match = "не показывать."
+            else:
+                add_match = "показывать"
+            after_tour = types.InlineKeyboardButton(text="Турнрирную сетку после матча "+ add_match,callback_data="change_trn"+team[1])
+            keyboard.add(after_tour)
+        callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting_alerts")
+        keyboard.add(callback_button)
+        keyboard.add(callback_button_exit)
+        sqler.close()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  text="Настройки для "+mess, reply_markup=keyboard)
 
 
 
