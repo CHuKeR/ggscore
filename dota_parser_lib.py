@@ -94,16 +94,16 @@ class info_match():
         self.teams_with_id = sqler.select_all_dota_teams()
         self.bot = bot
 
-    def make_user_team_list(self, user_prefer):
-        if user_prefer == "0;":
-            user_team_list = self.teams_with_id.values()
-        # Иначе
-        else:
-            user_prefer = user_prefer.split(";")
-            user_team_list = []
-            for team in user_prefer[:-1]:
-                user_team_list.append(self.teams_with_id[int(team)])
-        return user_team_list
+    def make_user_team_list(self, user_team_list):
+        user_team_dict = {}
+        for user in user_team_list:
+            try:
+                elem = user_team_dict[user[0]]
+                user_team_dict[user[0]] = elem+user[1]
+            except KeyError:
+                user_team_dict[user[0]]=user[1]
+        return user_team_dict
+
 
     def make_message_result(self,match):
         result = "*{} * -vs - * {} *\nTournament: *{} *\nResult: {}".format(match[0], match[1], match[2], match[3])
@@ -125,7 +125,7 @@ class info_match():
         #Получаем завершенные матчи
             data_list = self.sqler.get_finished_matches()
             #Список юзеров и их выбранных команд
-            user_list = self.sqler.select_all_user_teams(show_match=0)
+            user_list = self.sqler.select_all_user_teams()
             for user in user_list:
                 for match in data_list:
                     #Если 0 - то все матчи, иначе смотрим, что есть
@@ -174,9 +174,10 @@ class info_match():
         #Получаем матчи
         data_list = self.sqler.select_matches()
         if asked_user != None:
-            user_list = self.sqler.select_all_user_teams(asked_user)
+            user_team_list = self.sqler.select_all_user_teams(asked_user)
         else:
-            user_list = self.sqler.select_all_user_teams()
+            user_team_list = self.sqler.select_all_user_teams()
+        user_list = self.make_user_team_list(user_team_list)
         for user in user_list:
             self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
             #Есть ли вообще матчи?

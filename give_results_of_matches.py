@@ -18,8 +18,8 @@ if __name__ == "__main__":
     bot = telebot.TeleBot(token)
     sqler = SQLighter.DotaSqlClient()
     dota_info = dota_parser_lib.info_match(sqler, bot)
-    dota_info.give_results_of_matches()
     dota_info.give_results_live(driver)
+    dota_info.give_results_of_matches()
     dota_info.give_tour_pic(driver)
     #В конце удаляем завершенные матчи
     sqler.delete_finisher_matches()
