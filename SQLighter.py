@@ -20,7 +20,7 @@ class DotaSqlClient:
     # Вставить будущий матч без результата (id, team1, team2, tournament, tour_link, match_link, live, *match_time)
     def insert_match(self, match):
             with self.connection:
-                if len(match) ==  12:
+                if len(match) ==  8:
                     sql = """
                     INSERT INTO dota_matches
                           (id, team1, team2, tournament, tour_link, match_link, live, match_time) 
