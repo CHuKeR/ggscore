@@ -49,11 +49,19 @@ class DotaSqlClient:
         old_time = old_time.split(",")
         timeq = old_time[1]
         new_data = old_time[0].split(" ")
-        day = new_data[0]
         months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября",
                   "ноября",
-                  "декабря"]
-        new_mount = months.index(new_data[1]) + 1
+                  "декабря",
+                  "January","February","March","April" ,"May","June","July","August",
+                  "September","October","November","December"]
+        #Разные версии сайты (ру\англ) - разные даты
+
+        try:
+            day = new_data[0]
+            new_mount = months.index(new_data[1]) + 1
+        except Exception:
+            day = new_data[1]
+            new_mount = months.index(new_data[0]) + 1
         new_time = "{}.{}, {}".format(day, new_mount, timeq)
         return new_time
 
