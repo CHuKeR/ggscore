@@ -99,11 +99,16 @@ class info_match():
         for user in user_team_list:
             print(len(user_team_list))
             id = int(user[1][:-1])
-            try:
-                elem = user_team_dict[user[0]]
-                user_team_dict[user[0]] = elem+self.teams_with_id[id]+";"
-            except KeyError:
-                user_team_dict[user[0]]=self.teams_with_id[id]+";"
+            if id !=0:
+                try:
+                    elem = user_team_dict[user[0]]
+                    user_team_dict[user[0]] = elem+self.teams_with_id[id]+";"
+                except KeyError:
+                    user_team_dict[user[0]]=self.teams_with_id[id]+";"
+            else:
+                user_team_dict[user[0]] = ""
+                for team in self.teams_with_id:
+                    user_team_dict[user[0]]+=team[0]
         return user_team_dict
 
 
@@ -127,33 +132,33 @@ class info_match():
         #Получаем завершенные матчи
             data_list = self.sqler.get_finished_matches()
             #Список юзеров и их выбранных команд
-            user_list = self.sqler.select_all_user_teams()
-            for user in user_list:
-                for match in data_list:
-                    #Если 0 - то все матчи, иначе смотрим, что есть
-                    user_team_list = self.make_user_team_list(user[1])
-                    #Если эти матчи есть, то делаем результат, и выдаем это юзеру
-                    if match[0] in user_team_list or match[1] in user_team_list:
-                        mess = self.make_message_result(match)
-                        # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
-                        try:
-                            self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
-                        except telebot.apihelper.ApiException as e:
-                            desc = eval(e.result.text.replace("false", "False"))
-                            if desc== "Bad Request: chat not found":
-                                self.sqler.delete_user(user)
+            if len(data_list)>0:
+                user_team_list = self.sqler.select_all_user_teams()
+                user_list = self.make_user_team_list(user_team_list)
+                for user in user_list.items():
+                    for match in data_list:
+                        #Если эти матчи есть, то делаем результат, и выдаем это юзеру
+                        if match[0] in user_team_list or match[1] in user_team_list:
+                            mess = self.make_message_result(match)
+                            # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
+                            try:
+                                self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
+                            except telebot.apihelper.ApiException as e:
+                                desc = eval(e.result.text.replace("false", "False"))
+                                if desc== "Bad Request: chat not found":
+                                    self.sqler.delete_user(user)
 
     def give_tour_pic(self,driver):
         #Получаем завершенные матчи
-            data_list = self.sqler.get_finished_matches()
+        data_list = self.sqler.get_finished_matches()
+        if len(data_list)>0:
             #Список юзеров и их выбранных команд
-            user_list = self.sqler.select_all_user_teams(show_tour=1)
-            for user in user_list:
+            user_team_list = self.sqler.select_all_user_teams(show_tour=1)
+            user_list = self.make_user_team_list(user_team_list)
+            for user in user_list.items():
                 for match in data_list:
-                    #Если 0 - то все матчи, иначе смотрим, что есть
-                    user_team_list = self.make_user_team_list(user[1])
                     #Если эти матчи есть, то делаем результат, и выдаем это юзеру
-                    if match[0] in user_team_list or match[1] in user_team_list:
+                    if match[0] in user[1] or match[1] in user[1]:
                         mess = self.make_message_result(match)
                         # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
                         try:
@@ -282,7 +287,7 @@ class info_match():
             new_res = str(int(loc_res[0])+1)+":"+loc_res[1]
         elif winner.lower() in team2.lower():
             new_res = loc_res[0]+":"+str(int(loc_res[1])+1)
-        else: new_res = "TROUBE"
+        else: new_res = "0:0"
         return new_res
 
     def get_tournament_res(self, url, driver):
