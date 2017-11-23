@@ -98,7 +98,7 @@ class info_match():
         user_team_dict = {}
         for user in user_team_list:
             print(len(user_team_list))
-            id = user[1][:-1]
+            id = int(user[1][:-1])
             try:
                 elem = user_team_dict[user[0]]
                 user_team_dict[user[0]] = elem+self.teams_with_id[id]+";"
