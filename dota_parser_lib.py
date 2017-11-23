@@ -98,11 +98,12 @@ class info_match():
         user_team_dict = {}
         for user in user_team_list:
             print(len(user_team_list))
+            id = user[1][:-1]
             try:
                 elem = user_team_dict[user[0]]
-                user_team_dict[user[0]] = elem+user[1]
+                user_team_dict[user[0]] = elem+self.teams_with_id[id]+";"
             except KeyError:
-                user_team_dict[user[0]]=user[1]
+                user_team_dict[user[0]]=self.teams_with_id[id]+";"
         return user_team_dict
 
 
@@ -184,9 +185,8 @@ class info_match():
             #Есть ли вообще матчи?
             yes_matches = False
             #Если все команды
-            user_team_list = self.make_user_team_list(user[1])
             for match in data_list:
-                if (match[0] in user_team_list or match[1] in user_team_list) and match[5][:len(str(today))] == str(today):
+                if (match[0] in user[1] or match[1] in user[1]) and match[5][:len(str(today))] == str(today):
                     mess = self.make_message_future(match)
                     self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
                     yes_matches = True
