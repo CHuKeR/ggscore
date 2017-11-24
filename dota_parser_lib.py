@@ -222,8 +222,14 @@ class info_match():
         final_list = []
         td_links = self.sqler.select_td_link_teams()
         for match in match_list:
-            team1 = td_links[match[0]]
-            team2 = td_links[match[1]]
+            try:
+                team1 = td_links[match[0]]
+            except KeyError:
+                team1 = match[0]
+            try:
+                team2 = td_links[match[1]]
+            except KeyError:
+                team2 = match[1]
             if match[10] == None or match[10]=="None":
                 href = self.find_track_dota_link(team1,team2,driver)
                 self.sqler.set_td_link(match[4],href)
