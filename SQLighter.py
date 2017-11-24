@@ -106,13 +106,13 @@ class DotaSqlClient:
             dota_teams_dict = dict((y, x) for x, y in dota_teams)
             return dota_teams_dict
 
-        def select_td_link_teams(self, region=None):
-            with self.connection:
-                sql = "SELECT team_name, td_name from dota_teams"
-                self.cursor.execute(sql)
-                dota_teams = self.cursor.fetchall()
-                dota_teams_dict = dict((y, x) for x, y in dota_teams)
-                return dota_teams_dict
+    def select_td_link_teams(self, region=None):
+        with self.connection:
+            sql = "SELECT team_name, td_name from dota_teams"
+            self.cursor.execute(sql)
+            dota_teams = self.cursor.fetchall()
+            dota_teams_dict = dict((y, x) for x, y in dota_teams)
+            return dota_teams_dict
 
     #Получаем все лайв матчи
     def select_live_matches(self):
