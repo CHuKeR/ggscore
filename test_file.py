@@ -24,10 +24,12 @@ match_list = [
     "http://game-tournaments.com/dota-2/galaxy-battles-major/cis-2/double-dimension-vs-empire-58557"
 
 ]
-match_q = ["DD","Empire","Galaxy Battles II: Emerging Worlds",None,"58557",None,"/dota-2/galaxy-battles-major/cis-2","/dota-2/galaxy-battles-major/cis-2/double-dimension-vs-empire-58557","1","0","None","0:0"]
 
-id = 201501278
-sqler = SQLighter.DotaSqlClient()
-dota_info = dpl.info_match(sqler, bot)
-dota_info.give_today_matches(id)
-sqler.close()
+file = open("teams1.txt")
+for team in file:
+    team = team.split(" ")
+    for i in range(0,len(team)):
+        team[i] = team[i].replace("\n","")
+    team1 = team[0]
+    team2 = " ".join(team[1:])
+    sqler.up_team(team1,team2)

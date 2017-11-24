@@ -5,12 +5,13 @@ class DotaSqlClient:
 
 
     def __init__(self):
+
         self.connection = pymysql.connect(host='us-cdbr-iron-east-05.cleardb.net',
-                                          port=3306,
-                                          user='b1c0c21dcb6edc',
-                                          passwd='3933112c',
-                                          db='heroku_16092c835aedf9e',
-                                          charset= "utf8")
+                                              port=3306,
+                                              user='b1c0c21dcb6edc',
+                                              passwd='3933112c',
+                                              db='heroku_16092c835aedf9e',
+                                              charset= "utf8")
         self.cursor = self.connection.cursor()
 
 
@@ -105,6 +106,14 @@ class DotaSqlClient:
             dota_teams_dict = dict((y, x) for x, y in dota_teams)
             return dota_teams_dict
 
+        def select_td_link_teams(self, region=None):
+            with self.connection:
+                sql = "SELECT team_name, td_name from dota_teams"
+                self.cursor.execute(sql)
+                dota_teams = self.cursor.fetchall()
+                dota_teams_dict = dict((y, x) for x, y in dota_teams)
+                return dota_teams_dict
+
     #Получаем все лайв матчи
     def select_live_matches(self):
         with self.connection:
@@ -190,5 +199,9 @@ class DotaSqlClient:
         with self.connection:
             sql = "insert into dota_db(user_id) values('{}')".format(user_id)
             self.cursor.execute(sql)
+
+    def up_team(self,name1,name2):
+        with self.connection:
+            self.cursor.execute('UPDATE dota_teams set td_name = "{}" where team_name = "{}"'.format(name2,name1))
 
 

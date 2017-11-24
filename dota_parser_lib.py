@@ -138,7 +138,7 @@ class info_match():
                 for user in user_list.items():
                     for match in data_list:
                         #Если эти матчи есть, то делаем результат, и выдаем это юзеру
-                        if match[0] in user_team_list or match[1] in user_team_list:
+                        if match[0] in user[1] or match[1] in user[1]:
                             mess = self.make_message_result(match)
                             # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
                             try:
@@ -200,34 +200,38 @@ class info_match():
 
     def give_results_live(self, driver):
         res_list = self.get_results_of_live(driver)
-        user_list = self.sqler.select_all_user_teams(show_match=1)
-        for user in user_list:
-            for match in res_list:
-                user_team_list = self.make_user_team_list(user[1])
-                #Если эти матчи есть, то делаем результат, и выдаем это юзеру
-                if match[0] in user_team_list or match[1] in user_team_list:
-                    mess = self.make_message_live(match)
-                    # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
-                    try:
-                        self.bot.send_photo(int(user[0]),photo=match[2],caption=mess)
-                    except telebot.apihelper.ApiException as e:
-                        desc = eval(e.result.text.replace("false", "False"))
-                        print("Нет чата")
-                        if desc== "Bad Request: chat not found":
-                            self.sqler.delete_user(user)
+        user_team_list = self.sqler.select_all_user_teams(show_match=1)
+        user_list = self.make_user_team_list(user_team_list)
+        if len(res_list)>0:
+            for user in user_list:
+                for match in res_list:
+                    #Если эти матчи есть, то делаем результат, и выдаем это юзеру
+                    if match[0] in user[1] or match[1] in user[1]:
+                        mess = self.make_message_live(match)
+                        # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
+                        try:
+                            self.bot.send_photo(int(user[0]),photo=match[2],caption=mess)
+                        except telebot.apihelper.ApiException as e:
+                            desc = eval(e.result.text.replace("false", "False"))
+                            print("Нет чата")
+                            if desc== "Bad Request: chat not found":
+                                self.sqler.delete_user(user)
 
     def get_results_of_live(self,driver):
         match_list = self.sqler.select_live_matches()
         final_list = []
+        td_links = self.sqler.select_td_link_teams()
         for match in match_list:
+            team1 = td_links[match[0]]
+            team2 = td_links[match[1]]
             if match[10] == None or match[10]=="None":
-                href = self.find_track_dota_link(match[0],match[1],driver)
+                href = self.find_track_dota_link(team1,team2,driver)
                 self.sqler.set_td_link(match[4],href)
             picture = self.parse_live_match(driver,match)
             if picture!=None:
                 if match[10]!="None":
                     winner = self.get_winner(driver,match[10])
-                    new_res = self.update_loc_res(winner,match[11],match[0],match[1])
+                    new_res = self.update_loc_res(winner,match[11],team1,team2)
                     self.sqler.update_loc_res(match[4],new_res)
                     final_list.append([match[0],match[1],picture,winner,new_res])
                 else:
