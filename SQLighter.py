@@ -106,12 +106,12 @@ class DotaSqlClient:
             dota_teams_dict = dict((y, x) for x, y in dota_teams)
             return dota_teams_dict
 
-    def select_td_link_teams(self, region=None):
+    def select_td_link_teams(self):
         with self.connection:
             sql = "SELECT team_name, td_name from dota_teams"
             self.cursor.execute(sql)
             dota_teams = self.cursor.fetchall()
-            dota_teams_dict = dict((y, x) for x, y in dota_teams)
+            dota_teams_dict = dict((x.replace("\t",""), y.replace("\t","")) for x, y in dota_teams)
             return dota_teams_dict
 
     #Получаем все лайв матчи
