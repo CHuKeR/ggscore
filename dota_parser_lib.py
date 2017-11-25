@@ -117,7 +117,7 @@ class info_match():
         return result
 
     def make_message_future(self,match):
-        result = "*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[2])
+        result = "*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[3])
         return result
 
     def make_message_live(self,match):
