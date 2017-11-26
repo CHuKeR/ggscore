@@ -1,8 +1,6 @@
+import requests
+from bs4 import BeautifulSoup, element
 import SQLighter
-from time import time
-from selenium import webdriver
-from time import sleep
-import dota_parser_lib as dpl
 import telebot
 import config
 
@@ -30,6 +28,4 @@ for team in file:
     team = team.split(" ")
     for i in range(0,len(team)):
         team[i] = team[i].replace("\n","")
-    team1 = team[0]
-    team2 = " ".join(team[1:])
-    sqler.up_team(team1,team2)
+    sqler.up_team(team[0], " ".join(team[1:]))

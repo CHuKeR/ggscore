@@ -203,7 +203,7 @@ class info_match():
         user_team_list = self.sqler.select_all_user_teams(show_match=1)
         user_list = self.make_user_team_list(user_team_list)
         if len(res_list)>0:
-            for user in user_list:
+            for user in user_list.items():
                 for match in res_list:
                     #Если эти матчи есть, то делаем результат, и выдаем это юзеру
                     if match[0] in user[1] or match[1] in user[1]:
@@ -222,14 +222,17 @@ class info_match():
         final_list = []
         td_links = self.sqler.select_td_link_teams()
         for match in match_list:
+            true_name = 0
             try:
                 team1 = td_links[match[0]]
             except KeyError:
                 team1 = match[0]
+                true_name = 1
             try:
                 team2 = td_links[match[1]]
             except KeyError:
                 team2 = match[1]
+                true_name = 2
             if match[10] == None or match[10]=="None":
                 href = self.find_track_dota_link(team1,team2,driver)
                 self.sqler.set_td_link(match[4],href)
@@ -237,7 +240,7 @@ class info_match():
             if picture!=None:
                 if match[10]!="None":
                     winner = self.get_winner(driver,match[10])
-                    new_res = self.update_loc_res(winner,match[11],team1,team2)
+                    new_res = self.update_loc_res(winner,match[11],team1,team2, true_name)
                     self.sqler.update_loc_res(match[4],new_res)
                     final_list.append([match[0],match[1],picture,winner,new_res])
                 else:
@@ -247,11 +250,8 @@ class info_match():
         return final_list
 
     def find_track_dota_link(self, team1, team2, driver):
-        tic = time()
         url = "https://www.trackdota.com"
         driver.get(url)
-        toc = time()
-        print("Open url: {}".format(toc - tic))
         league_list = driver.find_elements_by_xpath("//*[@class='league_wrapper ng-scope']")
         for match in league_list:
             match_list = match.find_elements_by_tag_name("a")
@@ -290,14 +290,21 @@ class info_match():
         winner = driver.find_elements_by_class_name("column")[2].text.split("\n")[2]
         return winner
 
-    def update_loc_res(self,winner,loc_res, team1, team2):
+    def update_loc_res(self,winner,loc_res, team1, team2, true_name):
         loc_res = loc_res.split(":")
         print(winner,loc_res,team1,team2)
         if winner.lower() in team1.lower():
             new_res = str(int(loc_res[0])+1)+":"+loc_res[1]
         elif winner.lower() in team2.lower():
             new_res = loc_res[0]+":"+str(int(loc_res[1])+1)
-        else: new_res = "0:0"
+        elif true_name == 1:
+            new_res = str(int(loc_res[0]) + 1) + ":" + loc_res[1]
+        elif true_name == 2:
+            new_res = loc_res[0] + ":" + str(int(loc_res[1]) + 1)
+        else:
+            new_res = "0:0"
+
+
         return new_res
 
     def get_tournament_res(self, url, driver):

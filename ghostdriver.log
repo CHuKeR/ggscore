@@ -1,7 +1,61 @@
-[INFO  - 2017-11-24T11:48:40.967Z] GhostDriver - Main - running on port 53614
-[INFO  - 2017-11-24T11:48:42.025Z] Session [6b20c820-d10d-11e7-bb49-39e7a564aa18] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
-[INFO  - 2017-11-24T11:48:42.025Z] Session [6b20c820-d10d-11e7-bb49-39e7a564aa18] - page.customHeaders:  - {}
-[INFO  - 2017-11-24T11:48:42.025Z] Session [6b20c820-d10d-11e7-bb49-39e7a564aa18] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
-[INFO  - 2017-11-24T11:48:42.025Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 6b20c820-d10d-11e7-bb49-39e7a564aa18
-[INFO  - 2017-11-24T11:53:41.030Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
-[INFO  - 2017-11-24T11:58:41.037Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T13:24:49.586Z] GhostDriver - Main - running on port 55001
+[INFO  - 2017-11-26T13:24:50.659Z] Session [2e538490-d2ad-11e7-b43e-b39fa2429290] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2017-11-26T13:24:50.659Z] Session [2e538490-d2ad-11e7-b43e-b39fa2429290] - page.customHeaders:  - {}
+[INFO  - 2017-11-26T13:24:50.659Z] Session [2e538490-d2ad-11e7-b43e-b39fa2429290] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2017-11-26T13:24:50.659Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 2e538490-d2ad-11e7-b43e-b39fa2429290
+[ERROR - 2017-11-26T13:24:59.365Z] Session [2e538490-d2ad-11e7-b43e-b39fa2429290] - page.onError - msg: Error: undefined is not an object (evaluating 'a.data.length')
+getNumber@https://www.trackdota.com/scripts/vendor.ea51e491.js:10:19892
+https://www.trackdota.com/scripts/vendor.ea51e491.js:10:37812
+https://www.trackdota.com/scripts/vendor.ea51e491.js:2:10771
+k@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:58844
+k@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:58844
+https://www.trackdota.com/scripts/vendor.ea51e491.js:2:39923
+$eval@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:69438
+$digest@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:67968
+$apply@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:69764
+i@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:11196
+r@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:21112
+https://www.trackdota.com/scripts/vendor.ea51e491.js:2:21384
+g@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:6922
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-11-26T13:24:59.366Z] Session [2e538490-d2ad-11e7-b43e-b39fa2429290] - page.onError - stack:
+  (anonymous function) (https://www.trackdota.com/scripts/vendor.ea51e491.js:2)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-11-26T13:24:59.373Z] Session [2e538490-d2ad-11e7-b43e-b39fa2429290] - page.onError - msg: Error: undefined is not an object (evaluating 'a.data.length')
+getNumber@https://www.trackdota.com/scripts/vendor.ea51e491.js:10:19892
+https://www.trackdota.com/scripts/vendor.ea51e491.js:10:37812
+https://www.trackdota.com/scripts/vendor.ea51e491.js:2:10771
+k@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:58844
+k@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:58844
+https://www.trackdota.com/scripts/vendor.ea51e491.js:2:39923
+$eval@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:69438
+$digest@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:67968
+$apply@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:69764
+i@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:11196
+r@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:21112
+https://www.trackdota.com/scripts/vendor.ea51e491.js:2:21384
+g@https://www.trackdota.com/scripts/vendor.ea51e491.js:2:6922
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-11-26T13:24:59.373Z] Session [2e538490-d2ad-11e7-b43e-b39fa2429290] - page.onError - stack:
+  (anonymous function) (https://www.trackdota.com/scripts/vendor.ea51e491.js:2)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-11-26T13:25:06.355Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1511702706201
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2017-11-26T13:29:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T13:34:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T13:39:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T13:44:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T13:49:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T13:54:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T13:59:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T14:04:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T14:09:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T14:14:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T14:19:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T14:24:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2017-11-26T14:29:49.584Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
