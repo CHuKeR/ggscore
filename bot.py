@@ -23,7 +23,7 @@ def add_user_id(message):
         except Exception as e:
             print(e)
     # Под "остальным" понимаем состояние "0" - начало диалога
-    sqler.close()
+     
     bot.send_message(message.chat.id, "Добро пожаловать в IREU - бот, который сообщает вам о киберспортивных матчах.\n"
                                       " На настоящий момент реализованы оповещения о матчах по Dota2. Каждый день в 0:00 по МСК вы получаете мачти на день. \n"
                                       "По заверщении серии вы получаете результат. Пока что это все, но у нас много планов на будущее. Если что - /help вам в помощь!\n"
@@ -44,7 +44,7 @@ def add_user_id(message):
     sqler = SQLighter.DotaSqlClient()
     dota_info = dpl.info_match(sqler, bot)
     dota_info.give_today_matches(message.chat.id)
-    sqler.close()
+     
 
 @bot.message_handler(commands=["help"])
 def add_user_id(message):
@@ -143,7 +143,7 @@ def callback_inline3(call):
             mess = "Команды сброшены, что изволите делать дальше?"
 
         keyboard.add(callback_button_exit)
-        sqler.close()
+         
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text=mess, reply_markup=keyboard)
 
@@ -162,10 +162,10 @@ def callback_inline4(call):
                     team_in = True
         if team_in == False:
             sqler.insert_user_pref(call.message.chat.id, call.data)
-            sqler.close()
+             
             bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Добавили!")
         else:
-            sqler.close()
+             
             bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Вы уже следите за этой командой!")
 
 
@@ -200,7 +200,7 @@ def callback_inline5(call):
         callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting")
         keyboard.add(callback_button)
         keyboard.add(callback_button_exit)
-        sqler.close()
+         
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   text=mess, reply_markup=keyboard)
 
@@ -228,7 +228,7 @@ def callback_inline6(call):
         callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting_alerts")
         keyboard.add(callback_button)
         keyboard.add(callback_button_exit)
-        sqler.close()
+         
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   text="Настройки для "+mess, reply_markup=keyboard)
 
@@ -260,7 +260,7 @@ def callback_inline7(call):
         callback_button = types.InlineKeyboardButton(text="Назад",callback_data="setting_alerts")
         keyboard.add(callback_button)
         keyboard.add(callback_button_exit)
-        sqler.close()
+         
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   text="Настройки для "+mess, reply_markup=keyboard)
 
