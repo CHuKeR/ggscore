@@ -4,13 +4,14 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
 from src.api.models import Teams
+from src.bot.handlers import bot
 from src.config import config
 from src.extensions import session
 
 admin = Admin(name='microblog', template_mode='bootstrap3')
 
 
-def create_app(bot, config=config):
+def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
     admin.init_app(app)
@@ -25,6 +26,6 @@ def create_app(bot, config=config):
     def webhook():
         bot.remove_webhook()
         bot.set_webhook(url=f'{config.APP_HOST}/{config.BOT_API_TOKEN}')
-        return "!", 200
+        return f'{config.APP_HOST}/{config.BOT_API_TOKEN}', 200
 
     return app

@@ -1,7 +1,8 @@
+import telebot
+from telebot import apihelper
 from telebot import types
 
 from src.api.models import Users, Teams
-from src.bot import bot
 from src.bot.buttons import (
     add_team_button,
     add_row_next_previous,
@@ -10,7 +11,12 @@ from src.bot.buttons import (
     callback_button_exit,
     delete_team_button
 )
+from src.config import config
 from src.extensions import session
+
+apihelper.proxy = {'https': 'socks5://localhost:9050'}
+
+bot = telebot.TeleBot(config.BOT_API_TOKEN)
 
 
 @bot.message_handler(commands=["start"])
