@@ -26,6 +26,6 @@ def create_app():
     def webhook():
         bot.remove_webhook()
         bot.set_webhook(url=f'{config.APP_HOST}/{config.BOT_API_TOKEN}')
-        return f'{config.APP_HOST}/{config.BOT_API_TOKEN}', 200
+        return 'Hook was set!', 200
 
     return app
