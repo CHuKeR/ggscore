@@ -14,8 +14,6 @@ from src.bot.buttons import (
 from src.config import config
 from src.extensions import session
 
-apihelper.proxy = {'https': 'socks5://localhost:9050'}
-
 bot = telebot.TeleBot(config.BOT_API_TOKEN)
 
 
