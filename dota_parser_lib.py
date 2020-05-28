@@ -1,14 +1,15 @@
-import requests
-from bs4 import BeautifulSoup, element
 import datetime
-import telebot
-import pytz
-from time import time, sleep
-from PIL import Image
 from io import BytesIO
+from time import time, sleep
+
+import pytz
+import requests
+import telebot
+from PIL import Image
+from bs4 import BeautifulSoup, element
+
 
 class dota_parser():
-
     soup = ""
     teams_with_id = {}
     sqler = ""
@@ -22,14 +23,14 @@ class dota_parser():
 
     def parse_future_matches(self):
         final_list = []
-        table_match = self.soup.find('div', {"id" : "block_matches_current"})
+        table_match = self.soup.find('div', {"id": "block_matches_current"})
         for match in table_match.contents[1].contents:
-            if type(match)!= element.NavigableString:
+            if type(match) != element.NavigableString:
                 local_list = []
                 id = match.attrs["rel"]
                 local_list.append(id)
                 team1 = match.contents[3].contents[1].contents[1].contents[1].contents[1].contents[0]
-                team2 =  match.contents[3].contents[1].contents[5].contents[3].contents[1].contents[0]
+                team2 = match.contents[3].contents[1].contents[5].contents[3].contents[1].contents[0]
                 local_list.append(str(team1))
                 local_list.append(str(team2))
                 tour_title = match.contents[7].contents[1].attrs['title']
@@ -69,27 +70,26 @@ class dota_parser():
         return final_list
 
     def update_matches(self):
-        #Парсим будущие матчи
+        # Парсим будущие матчи
         data_list = self.parse_future_matches()
-        #Получаем список всех команд, которые парсим
+        # Получаем список всех команд, которые парсим
         teams = self.teams_with_id.values()
-        #Обновляем в БД будущие матчи (апдейты всего)
+        # Обновляем в БД будущие матчи (апдейты всего)
         for match in data_list:
             if (match[1] in teams or match[2] in teams) or (match[2] == "TBD" and match[1] == "TBD"):
                 self.sqler.insert_match(match)
-        #Парсим прошедшие матчи
+        # Парсим прошедшие матчи
         data_list = self.parse_prev_matches()
-        #Обновляем их в БД
+        # Обновляем их в БД
         for match in data_list:
-           if  (match[1] in teams or match[2] in teams):
+            if (match[1] in teams or match[2] in teams):
                 self.sqler.update_result(match)
 
-class info_match():
 
+class info_match():
     sqler = ""
 
-
-    def __init__(self,sqler, bot):
+    def __init__(self, sqler, bot):
         self.sqler = sqler
         self.teams_with_id = sqler.select_all_dota_teams()
         self.bot = bot
@@ -99,86 +99,86 @@ class info_match():
         for user in user_team_list:
             print(len(user_team_list))
             id = int(user[1][:-1])
-            if id !=0:
+            if id != 0:
                 try:
                     elem = user_team_dict[user[0]]
-                    user_team_dict[user[0]] = elem+self.teams_with_id[id]+";"
+                    user_team_dict[user[0]] = elem + self.teams_with_id[id] + ";"
                 except KeyError:
-                    user_team_dict[user[0]]=self.teams_with_id[id]+";"
+                    user_team_dict[user[0]] = self.teams_with_id[id] + ";"
             else:
                 user_team_dict[user[0]] = ""
                 for team in self.teams_with_id:
-                    user_team_dict[user[0]]+=team[0]
+                    user_team_dict[user[0]] += team[0]
         return user_team_dict
 
-
-    def make_message_result(self,match):
+    def make_message_result(self, match):
         result = "*{} * -vs - * {} *\nTournament: *{} *\nResult: {}".format(match[0], match[1], match[2], match[3])
         return result
 
-    def make_message_future(self,match):
-        result = "*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2], match[5].split(" ")[3])
+    def make_message_future(self, match):
+        result = "*{} * -vs - * {} *\nTournament: *{} *\nTime: {}".format(match[0], match[1], match[2],
+                                                                          match[5].split(" ")[3])
         return result
 
-    def make_message_live(self,match):
-        if len(match)==5:
-            result = "{} Победили! \n {}  - {} -  {} \n".format(match[3],match[0],match[4], match[1])
+    def make_message_live(self, match):
+        if len(match) == 5:
+            result = "{} Победили! \n {}  - {} -  {} \n".format(match[3], match[0], match[4], match[1])
         else:
             result = "К сожалению не получилось получить счёт серии. \n" \
-                     "{}  - vs -  {} ".format(match[0],match[1])
+                     "{}  - vs -  {} ".format(match[0], match[1])
         return result
 
     def give_results_of_matches(self):
-        #Получаем завершенные матчи
-            data_list = self.sqler.get_finished_matches()
-            #Список юзеров и их выбранных команд
-            if len(data_list)>0:
-                user_team_list = self.sqler.select_all_user_teams()
-                user_list = self.make_user_team_list(user_team_list)
-                for user in user_list.items():
-                    for match in data_list:
-                        #Если эти матчи есть, то делаем результат, и выдаем это юзеру
-                        if match[0] in user[1] or match[1] in user[1]:
-                            mess = self.make_message_result(match)
-                            # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
-                            try:
-                                self.bot.send_message(int(user[0]),mess, parse_mode="Markdown")
-                            except telebot.apihelper.ApiException as e:
-                                desc = eval(e.result.text.replace("false", "False"))
-                                if desc== "Bad Request: chat not found":
-                                    self.sqler.delete_user(user)
-
-    def give_tour_pic(self,driver):
-        #Получаем завершенные матчи
+        # Получаем завершенные матчи
         data_list = self.sqler.get_finished_matches()
-        if len(data_list)>0:
-            #Список юзеров и их выбранных команд
-            user_team_list = self.sqler.select_all_user_teams(show_tour=1)
+        # Список юзеров и их выбранных команд
+        if len(data_list) > 0:
+            user_team_list = self.sqler.select_all_user_teams()
             user_list = self.make_user_team_list(user_team_list)
             for user in user_list.items():
                 for match in data_list:
-                    #Если эти матчи есть, то делаем результат, и выдаем это юзеру
+                    # Если эти матчи есть, то делаем результат, и выдаем это юзеру
                     if match[0] in user[1] or match[1] in user[1]:
                         mess = self.make_message_result(match)
                         # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
                         try:
-                            pic = self.get_tournament_res(match[6],driver)
-                            mess = "Турнирная таблица "+ match[2]
+                            self.bot.send_message(int(user[0]), mess, parse_mode="Markdown")
+                        except telebot.apihelper.ApiException as e:
+                            desc = eval(e.result.text.replace("false", "False"))
+                            if desc == "Bad Request: chat not found":
+                                self.sqler.delete_user(user)
+
+    def give_tour_pic(self, driver):
+        # Получаем завершенные матчи
+        data_list = self.sqler.get_finished_matches()
+        if len(data_list) > 0:
+            # Список юзеров и их выбранных команд
+            user_team_list = self.sqler.select_all_user_teams(show_tour=1)
+            user_list = self.make_user_team_list(user_team_list)
+            for user in user_list.items():
+                for match in data_list:
+                    # Если эти матчи есть, то делаем результат, и выдаем это юзеру
+                    if match[0] in user[1] or match[1] in user[1]:
+                        mess = self.make_message_result(match)
+                        # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
+                        try:
+                            pic = self.get_tournament_res(match[6], driver)
+                            mess = "Турнирная таблица " + match[2]
                         except Exception:
                             print("Ошибка с картинкой турнира!")
                         try:
-                            self.bot.send_photo(int(user[0]),pic,caption=mess)
+                            self.bot.send_photo(int(user[0]), pic, caption=mess)
                         except telebot.apihelper.ApiException as e:
                             desc = eval(e.result.text.replace("false", "False"))
-                            if desc== "Bad Request: chat not found":
+                            if desc == "Bad Request: chat not found":
                                 self.sqler.delete_user(user)
 
-    def give_today_matches(self, asked_user = None):
-        #asked_user вызывается, если пользователь запрашивает матчи с бота.
-        #Обновляем день по МСК
+    def give_today_matches(self, asked_user=None):
+        # asked_user вызывается, если пользователь запрашивает матчи с бота.
+        # Обновляем день по МСК
         today = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow')).day
         month = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow')).month
-        #Получаем матчи
+        # Получаем матчи
         data_list = self.sqler.select_matches()
         if asked_user != None:
             user_team_list = self.sqler.select_all_user_teams(asked_user)
@@ -186,14 +186,14 @@ class info_match():
             user_team_list = self.sqler.select_all_user_teams()
         user_list = self.make_user_team_list(user_team_list)
         for user in user_list.items():
-            self.bot.send_message(int(user[0]),"Матчи на {}.{}".format(today,month),parse_mode="Markdown")
-            #Есть ли вообще матчи?
+            self.bot.send_message(int(user[0]), "Матчи на {}.{}".format(today, month), parse_mode="Markdown")
+            # Есть ли вообще матчи?
             yes_matches = False
-            #Если все команды
+            # Если все команды
             for match in data_list:
                 if (match[0] in user[1] or match[1] in user[1]) and match[5][:len(str(today))] == str(today):
                     mess = self.make_message_future(match)
-                    self.bot.send_message(int(user[0]),mess,parse_mode="Markdown")
+                    self.bot.send_message(int(user[0]), mess, parse_mode="Markdown")
                     yes_matches = True
             if yes_matches == False:
                 self.bot.send_message(int(user[0]), "Нет мачтчей на сегодня!", parse_mode="Markdown")
@@ -202,22 +202,22 @@ class info_match():
         res_list = self.get_results_of_live(driver)
         user_team_list = self.sqler.select_all_user_teams(show_match=1)
         user_list = self.make_user_team_list(user_team_list)
-        if len(res_list)>0:
+        if len(res_list) > 0:
             for user in user_list.items():
                 for match in res_list:
-                    #Если эти матчи есть, то делаем результат, и выдаем это юзеру
+                    # Если эти матчи есть, то делаем результат, и выдаем это юзеру
                     if match[0] in user[1] or match[1] in user[1]:
                         mess = self.make_message_live(match)
                         # Может возникнуть ошибка, что нет юзера. Надо бы удалить/.
                         try:
-                            self.bot.send_photo(int(user[0]),photo=match[2],caption=mess)
+                            self.bot.send_photo(int(user[0]), photo=match[2], caption=mess)
                         except telebot.apihelper.ApiException as e:
                             desc = eval(e.result.text.replace("false", "False"))
                             print("Нет чата")
-                            if desc== "Bad Request: chat not found":
+                            if desc == "Bad Request: chat not found":
                                 self.sqler.delete_user(user)
 
-    def get_results_of_live(self,driver):
+    def get_results_of_live(self, driver):
         match_list = self.sqler.select_live_matches()
         final_list = []
         td_links = self.sqler.select_td_link_teams()
@@ -233,19 +233,19 @@ class info_match():
             except KeyError:
                 team2 = match[1]
                 true_name = 2
-            if match[10] == None or match[10]=="None":
-                href = self.find_track_dota_link(team1,team2,driver)
-                self.sqler.set_td_link(match[4],href)
-            picture = self.parse_live_match(driver,match)
-            if picture!=None:
-                if match[10]!="None":
-                    winner = self.get_winner(driver,match[10])
-                    new_res = self.update_loc_res(winner,match[11],team1,team2, true_name)
-                    self.sqler.update_loc_res(match[4],new_res)
-                    final_list.append([match[0],match[1],picture,winner,new_res])
+            if match[10] == None or match[10] == "None":
+                href = self.find_track_dota_link(team1, team2, driver)
+                self.sqler.set_td_link(match[4], href)
+            picture = self.parse_live_match(driver, match)
+            if picture != None:
+                if match[10] != "None":
+                    winner = self.get_winner(driver, match[10])
+                    new_res = self.update_loc_res(winner, match[11], team1, team2, true_name)
+                    self.sqler.update_loc_res(match[4], new_res)
+                    final_list.append([match[0], match[1], picture, winner, new_res])
                 else:
                     self.sqler.delete_td_link(match[4])
-                    final_list.append([match[0],match[1],picture])
+                    final_list.append([match[0], match[1], picture])
 
         return final_list
 
@@ -259,8 +259,8 @@ class info_match():
                 if team1 in match.text or team2 in match.text:
                     return match.get_attribute("href")
 
-    def parse_live_match(self, driver,match):
-        driver.get("http://game-tournaments.com"+match[7])
+    def parse_live_match(self, driver, match):
+        driver.get("http://game-tournaments.com" + match[7])
         games = driver.find_elements_by_class_name("t")
         picture = None
         try:
@@ -271,7 +271,7 @@ class info_match():
                     tic = time()
                     picture = driver.find_element_by_partial_link_text("результаты").get_attribute("href")
                     toc = time()
-                    print("get pc {}".format(toc-tic))
+                    print("get pc {}".format(toc - tic))
                 except Exception as e:
                     print(e)
                     if not driver.find_elements_by_partial_link_text("LIVE"):
@@ -279,24 +279,25 @@ class info_match():
                     else:
                         print("LIVE_PARTY")
                         self.sqler.inc_number_of_matches(match[4])
-                else: self.sqler.inc_number_of_matches(match[4])
+                else:
+                    self.sqler.inc_number_of_matches(match[4])
         except IndexError:
             print("Матчи закончились")
             self.sqler.set_match_finisher(match[4])
         return picture
 
-    def get_winner(self,driver,url):
+    def get_winner(self, driver, url):
         driver.get(url)
         winner = driver.find_elements_by_class_name("column")[2].text.split("\n")[2]
         return winner
 
-    def update_loc_res(self,winner,loc_res, team1, team2, true_name):
+    def update_loc_res(self, winner, loc_res, team1, team2, true_name):
         loc_res = loc_res.split(":")
-        print(winner,loc_res,team1,team2)
+        print(winner, loc_res, team1, team2)
         if winner.lower() in team1.lower():
-            new_res = str(int(loc_res[0])+1)+":"+loc_res[1]
+            new_res = str(int(loc_res[0]) + 1) + ":" + loc_res[1]
         elif winner.lower() in team2.lower():
-            new_res = loc_res[0]+":"+str(int(loc_res[1])+1)
+            new_res = loc_res[0] + ":" + str(int(loc_res[1]) + 1)
         elif true_name == 1:
             new_res = str(int(loc_res[0]) + 1) + ":" + loc_res[1]
         elif true_name == 2:
@@ -304,12 +305,11 @@ class info_match():
         else:
             new_res = "0:0"
 
-
         return new_res
 
     def get_tournament_res(self, url, driver):
-        driver.get("http://game-tournaments.com"+url)
-        element =driver.find_elements_by_class_name("col-sm-12")[0]
+        driver.get("http://game-tournaments.com" + url)
+        element = driver.find_elements_by_class_name("col-sm-12")[0]
         location = element.location
         size = element.size
         im = Image.open(BytesIO(element.screenshot_as_png))
@@ -317,7 +317,7 @@ class info_match():
         top = location['y']
         right = location['x'] + size['width']
         bottom = location['y'] + size['height']
-        im = im.crop((left, top, right, bottom)) # defines crop points
+        im = im.crop((left, top, right, bottom))  # defines crop points
         imgByteArr = BytesIO()
         im.save(imgByteArr, format='PNG')
         imgByteArr = imgByteArr.getvalue()
