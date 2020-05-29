@@ -1,7 +1,7 @@
 import datetime
 
 from src.api.models import Series
-from src.bot import bot
+from src.bot.handlers import bot
 
 
 def send_future_match(user: id, match: Series):
