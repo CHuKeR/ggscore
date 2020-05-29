@@ -7,6 +7,7 @@ from src.api.models import Teams
 from src.bot.handlers import bot
 from src.config import config
 from src.extensions import session
+from src.logger import create_logger
 
 admin = Admin(name='microblog', template_mode='bootstrap3')
 
@@ -14,6 +15,7 @@ admin = Admin(name='microblog', template_mode='bootstrap3')
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
+    create_logger()
     admin.init_app(app)
     admin.add_view(ModelView(Teams, session))
 

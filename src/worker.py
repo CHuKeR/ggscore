@@ -3,7 +3,10 @@ from src.api.models import Teams
 from src.api.models import Users
 from src.bot.messages import send_future_match, send_result_match
 from src.extensions import session
+from src.logger import create_logger
 from src.parser.dota_series import DotaParser
+
+logger = create_logger()
 
 
 def send_future_matches_to_users():
