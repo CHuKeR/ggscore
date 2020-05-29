@@ -23,14 +23,14 @@ def delete_team_button(team_name, team_id):
 
 def next_page_button(page: int, action_type: str):
     if page > 0:
-        return types.InlineKeyboardButton(text='Следующая страница', callback_data=f'{action_type}_teams_{page - 1}')
+        return types.InlineKeyboardButton(text='Предыдущая страница', callback_data=f'{action_type}_teams_{page - 1}')
     else:
         return None
 
 
 def previous_page_button(page: int, action_type: str, count: int):
     if count - page * _elements_per_page > _elements_per_page:
-        return types.InlineKeyboardButton(text='Предыдущая страница', callback_data=f'{action_type}_teams_{page + 1}')
+        return types.InlineKeyboardButton(text='Следующая страница', callback_data=f'{action_type}_teams_{page + 1}')
 
 
 def add_row_next_previous(page: int, action_type: str, keyboard: types.InlineKeyboardMarkup, count: int):

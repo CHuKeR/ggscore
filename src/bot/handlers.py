@@ -23,7 +23,7 @@ def start(message):
     if user is None:
         session.add(Users(id=message.chat.id))
         session.commit()
-    bot.send_message(message.from_user.id, 'Team Spirit <3')
+    bot.send_message(message.from_user.id, 'Team Spirit <3. Ах да, настройки. Воспользуйтесь командой /setting')
 
 
 @bot.message_handler(commands=["setting"])
