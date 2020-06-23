@@ -33,14 +33,4 @@ def previous_page_button(page: int, action_type: str, count: int):
         return types.InlineKeyboardButton(text='Следующая страница', callback_data=f'{action_type}_teams_{page + 1}')
 
 
-def add_row_next_previous(page: int, action_type: str, keyboard: types.InlineKeyboardMarkup, count: int):
-    next_page = next_page_button(page, action_type)
-    prev_page = previous_page_button(page, action_type, count)
-    if next_page and prev_page:
-        keyboard.row(next_page, prev_page)
-    elif next_page and not prev_page:
-        keyboard.row(next_page)
-    elif not next_page and prev_page:
-        keyboard.row(prev_page)
-    else:
-        pass
+

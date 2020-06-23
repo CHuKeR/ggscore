@@ -1,6 +1,6 @@
 import datetime
 
-from src.api.models import Series
+from src.models import Series
 from src.bot.handlers import bot
 
 

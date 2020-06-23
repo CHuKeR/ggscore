@@ -1,9 +1,9 @@
-from src.api.models import Series
-from src.api.models import Teams
-from src.api.models import Users
 from src.bot.messages import send_future_match, send_result_match
 from src.extensions import session
 from src.logger import create_logger
+from src.models import Series
+from src.models import Teams
+from src.models import Users
 from src.parser.dota_series import DotaParser
 
 logger = create_logger()
@@ -20,14 +20,19 @@ def send_future_matches_to_users():
 
 
 def send_updated_matches_to_user(matches: list):
-    teams_list = set([match.team1_name for match in matches] + [match.team2_name for match in matches])
-    teams_object = session.query(Teams.id).filter(Teams.tag.in_(teams_list))
-    users_for_update = session.query(Users).filter(Users.teams.any(Teams.id.in_(teams_object))).all()
+    users_for_update = get_users_to_updates(matches)
     for user in users_for_update:
         user_teams = user.get_user_teams()
         for match in matches:
             if match.team1_name in user_teams or match.team2_name in user_teams:
                 send_future_match(user, match)
+
+
+def get_users_to_updates(matches: list):
+    teams_list = set([match.team1_name for match in matches] + [match.team2_name for match in matches])
+    teams_object = session.query(Teams.id).filter(Teams.tag.in_(teams_list))
+    users_for_update = session.query(Users).filter(Users.teams.any(Teams.id.in_(teams_object))).all()
+    return users_for_update
 
 
 def send_finished_matches_to_users():

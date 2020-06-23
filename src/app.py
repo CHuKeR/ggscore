@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
-from src.api.models import Teams
+from src.models import Teams
 from src.bot.handlers import bot
 from src.config import config
 from src.extensions import session
