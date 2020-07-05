@@ -33,7 +33,7 @@ def upgrade():
     sa.Column('team1_name', sa.String(length=20), nullable=True),
     sa.Column('team2_name', sa.String(length=20), nullable=True),
     sa.Column('series_url', sa.String(length=256), nullable=True),
-    sa.Column('score', sa.String(length=3), nullable=True),
+    sa.Column('score', sa.String(length=7), nullable=True),
     sa.Column('date', sa.DateTime(), nullable=True),
     sa.Column('tournament_name', sa.String(length=256), nullable=True),
     sa.Column('finished', sa.Boolean(), nullable=True),

@@ -48,7 +48,7 @@ class Series(Base):
     team1_name = Column(String(20))
     team2_name = Column(String(20))
     series_url = Column(String(256))
-    score = Column(String(3), default='0:0')
+    score = Column(String(7), default='0:0')
     date = Column(DateTime)
     tournament_name = Column(String(256))
     finished = Column(Boolean)
