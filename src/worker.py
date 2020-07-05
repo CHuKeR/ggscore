@@ -93,12 +93,13 @@ def update_finished_dota_matches():
     for match in matches:
         seria = session.query(Series).filter(Series.id == match['seria_id']).first()
         if seria is not None:
-            seria.score = match['score']
+            seria.score = match['result']
             seria.finished = True
+            try:
+                session.commit()
+            except Exception as exc:
+                logger.error(exc)
+                session.rollback()
         else:
             logger.error(f'Match with {match["seria_id"]} not in database!')
-        try:
-            session.commit()
-        except Exception as exc:
-            logger.error(exc)
-            session.rollback()
+
