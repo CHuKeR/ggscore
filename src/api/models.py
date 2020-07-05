@@ -68,8 +68,9 @@ class Series(Base):
 
     @classmethod
     def get_finished_matches(cls):
-        return session.query(cls).filter(cls.finished is True).all()
+        return session.query(cls).filter(cls.finished == True).all()
 
     @classmethod
     def delete_finished_matches(cls):
-        session.query(cls).filter(cls.finished is True).delete(synchronize_session='fetch')
+        session.query(cls).filter(cls.finished == True).delete(synchronize_session='fetch')
+        session.commit()
