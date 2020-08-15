@@ -25,7 +25,7 @@ def send_updated_matches_to_user(matches: list):
         user_teams = user.get_user_teams()
         for match in matches:
             if match.team1_name in user_teams or match.team2_name in user_teams:
-                send_future_match(user, match)
+                send_future_match(user.id, match)
 
 
 def get_users_to_updates(matches: list):
@@ -102,4 +102,3 @@ def update_finished_dota_matches():
                 session.rollback()
         else:
             logger.error(f'Match with {match["seria_id"]} not in database!')
-

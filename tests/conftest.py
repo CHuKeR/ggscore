@@ -5,6 +5,7 @@ from src.extensions import session
 from src.models import Users, Base, Teams, Series
 from src.parser.dota_series import DotaParser
 from tests.assets import dota_1_future_match, dota_start_matches
+from telebot.apihelper import ApiException
 
 
 @pytest.fixture()
@@ -68,4 +69,11 @@ def start_matches(start_db):
 @pytest.fixture()
 def mock_telegram(mocker):
     send_future_mock = mocker.patch('src.worker.send_future_match')
+    return send_future_mock
+
+
+@pytest.fixture()
+def mock_fail_telegram(mocker):
+    send_future_mock = mocker.patch('src.bot.messages.bot.send_message',
+                                    side_effect=ApiException('test error', 'test', 'test'))
     return send_future_mock
