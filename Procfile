@@ -1,1 +1,1 @@
-web: gunicorn 'src.api.app:create_app()'
+web: gunicorn 'src.app:create_app()'
