@@ -7,8 +7,9 @@ from bs4 import BeautifulSoup, element
 class DotaParser:
 
     def __init__(self):
-        url = 'http://game-tournaments.com/dota-2/matches'
-        r = requests.get(url)
+        self.main_url = 'https://game-tournaments.com'
+        self.url = 'https://game-tournaments.com/dota-2/matches'
+        r = requests.get(self.url)
         self.soup = BeautifulSoup(r.text, 'html.parser')
         self.datetime_format = '%Y-%m-%d %H:%M:%S'
 
