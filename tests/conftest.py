@@ -1,7 +1,10 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from src.extensions import session
-from src.models import Users, Base, Teams
+from src.models import Users, Base, Teams, Series
+from src.parser.dota_series import DotaParser
+from tests.assets import dota_1_future_match, dota_start_matches
 
 
 @pytest.fixture()
@@ -39,3 +42,30 @@ def add_teams_to_user(add_start_user, add_start_team):
     user.teams.append(teams[0])
     user.teams.append(teams[1])
     session.commit()
+
+
+@pytest.fixture()
+def mock_dota_parser(mocker):
+    mocker.patch.object(DotaParser, 'parse_future_matches', return_value=dota_1_future_match)
+    mocker.patch('requests.get')
+    mocker.patch.object(BeautifulSoup, '__init__', lambda x, y, z: None)
+
+
+@pytest.fixture()
+def start_matches(start_db):
+    for seria in dota_start_matches:
+        seria_ = Series(id=seria['seria_id'],
+                        team1_name=seria['team1_name'],
+                        team2_name=seria['team2_name'],
+                        tournament_name=seria['tour_title'],
+                        series_url=seria['match_link'],
+                        date=seria['date'],
+                        finished=False)
+        session.add(seria_)
+    session.commit()
+
+
+@pytest.fixture()
+def mock_telegram(mocker):
+    send_future_mock = mocker.patch('src.worker.send_future_match')
+    return send_future_mock

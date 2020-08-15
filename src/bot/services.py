@@ -84,3 +84,9 @@ def delete_team(message: str, user_id: int):
     team = session.query(Teams).filter(Teams.id == team_id).first()
     user.teams.remove(team)
     session.commit()
+
+
+def delete_user(user_id: int):
+    user = session.query(Users).filter(Users.id == user_id)
+    session.delete(user)
+    session.commit()

@@ -1,14 +1,10 @@
 import telebot
-from telebot import apihelper
 
 from src.bot.services import add_user, get_settings_keyboard, get_add_teams_keyboard, add_team, \
     get_delete_teams_keyboard, delete_team
 from src.config import config
 
 bot = telebot.TeleBot(config.BOT_API_TOKEN)
-
-if config.DEBUG:
-    apihelper.proxy = {'https': 'socks5://localhost:9050'}
 
 
 @bot.message_handler(commands=["start"])
