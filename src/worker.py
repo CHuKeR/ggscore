@@ -1,4 +1,4 @@
-from src.bot.messages import send_future_match, send_result_match
+from src.bot.messages import send_future_match, send_result_match, send_closest_match
 from src.extensions import session
 from src.logger import create_logger
 from src.models import Series
@@ -35,7 +35,7 @@ def send_closest_matches_to_user():
         matches = Series.get_closest_matches()
         for match in matches:
             if match.team1_name in user_teams or match.team2_name in user_teams:
-                send_future_match(user.id, match)
+                send_closest_match(user.id, match)
 
 
 def get_users_to_updates(matches: list):
