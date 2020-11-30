@@ -28,6 +28,16 @@ def send_updated_matches_to_user(matches: list):
                 send_future_match(user.id, match)
 
 
+def send_closest_matches_to_user():
+    users = session.query(Users).all()
+    for user in users:
+        user_teams = user.get_user_teams()
+        matches = Series.get_closest_matches()
+        for match in matches:
+            if match.team1_name in user_teams or match.team2_name in user_teams:
+                send_future_match(user.id, match)
+
+
 def get_users_to_updates(matches: list):
     teams_list = set([match.team1_name for match in matches] + [match.team2_name for match in matches])
     teams_object = session.query(Teams.id).filter(Teams.tag.in_(teams_list))

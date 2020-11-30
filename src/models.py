@@ -71,6 +71,13 @@ class Series(Base):
         return session.query(cls).filter(cls.finished == True).all()
 
     @classmethod
-    def delete_finished_matches(cls):
+    def delete_finished_matches(cls) -> None:
         session.query(cls).filter(cls.finished == True).delete(synchronize_session='fetch')
         session.commit()
+
+    @classmethod
+    def get_closest_matches(cls):
+        now_time = datetime.utcnow()
+        end_period = datetime.utcnow() + timedelta(minutes=10)
+        matches = session.query(cls).filter(cls.date > now_time).filter(cls.date < end_period).all()
+        return matches
